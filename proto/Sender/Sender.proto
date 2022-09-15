@@ -1,0 +1,25 @@
+syntax = "proto3";
+
+message CreateTopicRequest {
+  optional string name = 1;
+}
+
+message CreateTopicResponse {
+  optional bool success = 1;
+}
+
+message PublishMessageRequest {
+  optional string message = 1;
+}
+
+message PublishMessageResponse {
+  optional bool success = 1;
+}
+
+service CreateTopic {
+  rpc CreateTopic(CreateTopicRequest) returns (CreateTopicResponse);
+}
+
+service PublishMessage {
+  rpc PublishMessage(PublishMessageRequest) returns (PublishMessageResponse);
+}
