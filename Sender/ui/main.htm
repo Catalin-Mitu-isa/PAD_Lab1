@@ -1,0 +1,41 @@
+<html lang="html">
+  <head>
+    <title>Sender</title>
+    <style>
+      @import url(main.css);
+    </style>
+    <script type="module">
+      import "main.js";
+    </script>
+  </head>
+  <body>
+    <section #connection_section>
+      <label>
+        <input type="checkbox"/>
+        gRPC Enabled
+      </label>
+    </section>
+    <section #create_channel>
+      <label>
+        Topic name
+        <input #topic_input_field type="text">
+      </label>
+      <button #btn_create_topic .submit_btn>Submit</button>
+    </section>
+    <section #message_input_section>
+      <div>
+        <label>
+          <textarea
+                  #message_textarea
+                  rows="6"
+                  cols="40"
+                  placeholder="Message text"
+          ></textarea>
+        </label>
+      </div>
+      <div>
+        <button #btn_publish_message .submit_btn>Publish</button>
+      </div>
+    </section>
+  </body>
+</html>

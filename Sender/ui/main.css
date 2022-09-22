@@ -1,0 +1,36 @@
+body {
+    width: 400px;
+    height: 250px;
+}
+
+* {
+    font-family: "Segoe UI", Helvetica, sans-serif;
+}
+
+#connection_section {
+    margin-bottom: 10px;
+}
+
+#message_input_section {
+    /*display: none;*/
+}
+
+#message_textarea {
+    margin: 10px 10px 10px 0;
+    padding: 10px;
+}
+
+.submit_btn {
+    color: white;
+    background-color: #2222FF;
+    border: 0;
+    padding: 10px 20px 10px 20px;
+    border-radius: 20px;
+    cursor: pointer;
+    font-weight: bold;
+}
+
+#topic_input_field {
+    padding: 10px;
+    border-radius: 5px;
+}
