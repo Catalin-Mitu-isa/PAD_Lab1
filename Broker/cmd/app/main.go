@@ -1,7 +1,11 @@
 package main
 
-import "mr-l0n3lly/go-broker/pkg/hello"
+import (
+	"mr-l0n3lly/go-broker/pkg/socket"
+)
 
 func main() {
-	hello.SayHello()
+	socketServer := socket.GetSocketServer()
+
+	socketServer.Start()
 }
