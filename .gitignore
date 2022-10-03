@@ -1,2 +1,7 @@
 cmake-build-debug/
 .idea/
+proto/CMakeLists.txt
+Sender/resources.cpp
+Sender/sciter-js-sdk/
+Sender/proto/
+Sender/cmake-build-debug-unixmake/

@@ -1,11 +1,22 @@
 syntax = "proto3";
 
+// Enums -----------------------------------------------------------------------
+
+enum CREATE_TOPIC_RESPONSE_ERRORS {
+  NONE = 0;
+  OTHER = 1;
+  ALREADY_EXISTS = 2;
+}
+
+// Messages --------------------------------------------------------------------
+
 message CreateTopicRequest {
   optional string name = 1;
 }
 
 message CreateTopicResponse {
   optional bool success = 1;
+  optional CREATE_TOPIC_RESPONSE_ERRORS error = 2;
 }
 
 message PublishMessageRequest {
@@ -15,6 +26,8 @@ message PublishMessageRequest {
 message PublishMessageResponse {
   optional bool success = 1;
 }
+
+// Services --------------------------------------------------------------------
 
 service CreateTopic {
   rpc CreateTopic(CreateTopicRequest) returns (CreateTopicResponse);
