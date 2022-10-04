@@ -3,8 +3,9 @@
 
 #include <sciter-x.h>
 #include <sciter-x-window.hpp>
-#include "Sender.h"
 #include <iostream>
+#include "SocketSender.h"
+#include "RPCSender.h"
 
 class MainFrame: public sciter::window
 {
@@ -13,16 +14,20 @@ public:
 
     bool createTopic(sciter::value s_value);
     bool publishMessage(sciter::value s_value);
+    void toggleConnection();
 
     SOM_PASSPORT_BEGIN(MainFrame)
         SOM_FUNCS(
             SOM_FUNC(createTopic),
-            SOM_FUNC(publishMessage)
+            SOM_FUNC(publishMessage),
+            SOM_FUNC(toggleConnection)
         )
     SOM_PASSPORT_END
 
 private:
-    Sender m_sender;
+    SocketSender m_socketSender;
+    RPCSender m_rpcSender;
+    ISender * m_sender;
 };
 
 #endif //SENDER_MAINFRAME_H

@@ -1,0 +1,15 @@
+Sender
+
+Request:  {"action": "CREATE_TOPIC", "topic_name": "<value>"}
+Response: {"action": "CREATE_TOPIC", "success": "<bool_value>", "error": "<error>"}
+
+Request:  {"action": "PUBLISH_MESSAGE", "message": "<value>"}
+Response: {"action": "PUBLISH_MESSAGE", "success": "<bool_value", "error": "<error>"}
+
+
+Receiver
+
+Request:  {"action": "SUBSCRIBE", "topic_to_subscribe": "<value>"}
+Response: {"action": "SUBSCRIBE", "success": "<bool_value", "error": "<error>"}
+
+

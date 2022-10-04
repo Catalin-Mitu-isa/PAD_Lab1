@@ -12,7 +12,7 @@ body {
 }
 
 #message_input_section {
-    /*display: none;*/
+    display: none;
 }
 
 #message_textarea {

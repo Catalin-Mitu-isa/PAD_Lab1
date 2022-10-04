@@ -6,7 +6,9 @@ MainFrame::MainFrame()
         | SW_CONTROLS
         | SW_MAIN
         | SW_ENABLE_DEBUG)
-{ }
+{
+    m_sender = &m_socketSender;
+}
 
 bool MainFrame::createTopic(sciter::value s_value)
 {
@@ -15,7 +17,7 @@ bool MainFrame::createTopic(sciter::value s_value)
         return false;
 
     std::cout << "Create topic. Topic name: " << topicName << std::endl;
-    return true;
+    return m_sender->createTopic(topicName);
 }
 
 bool MainFrame::publishMessage(sciter::value s_value)
@@ -25,5 +27,14 @@ bool MainFrame::publishMessage(sciter::value s_value)
         return false;
 
     std::cout << "Publish message. Message: " << message << std::endl;
-    return true;
+    return m_sender->publishMessage(message);
+}
+
+void MainFrame::toggleConnection()
+{
+    std::cout << "Toggle connection" << std::endl;
+    if (m_sender == &m_socketSender)
+        m_sender = &m_rpcSender;
+    else
+        m_sender = &m_socketSender;
 }

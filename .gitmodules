@@ -1,3 +1,6 @@
 [submodule "Sender/sciter-js-sdk"]
 	path = Sender/sciter-js-sdk
 	url = https://gitlab.com/sciter-engine/sciter-js-sdk.git
+[submodule "Sender/asio"]
+	path = Sender/asio
+	url = git@github.com:boostorg/asio.git

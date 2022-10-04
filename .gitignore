@@ -5,3 +5,4 @@ Sender/resources.cpp
 Sender/sciter-js-sdk/
 Sender/proto/
 Sender/cmake-build-debug-unixmake/
+TestBroker/
