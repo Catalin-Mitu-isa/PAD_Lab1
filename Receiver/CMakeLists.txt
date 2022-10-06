@@ -8,33 +8,33 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 find_package(PkgConfig REQUIRED)
 pkg_check_modules(GTK3 REQUIRED gtk+-x11-3.0)
 
+# For automatic third party library setup
+include(FetchContent)
+
 # Asio -------------------------------------------------------------------------
 
-set(ASIO_CMAKE_ASIO_TAG "asio-1-24-0")
-set(ASIO_CMAKE_ASIO_SOURCE_DIR ${CMAKE_CURRENT_LIST_DIR})
-set(ASIO_CMAKE_ASIO_DEP_DIR "${ASIO_CMAKE_ASIO_SOURCE_DIR}/${ASIO_CMAKE_ASIO_TAG}-src")
-
-include(FetchContent)
+set(ASIO_TAG "asio-1-24-0")
+set(ASIO_SRC "${PROJECT_SOURCE_DIR}/../${ASIO_TAG}-src")
 
 FetchContent_Declare(asio
         GIT_REPOSITORY  https://github.com/chriskohlhoff/asio.git
-        GIT_TAG         ${ASIO_CMAKE_ASIO_TAG}
+        GIT_TAG         ${ASIO_TAG}
         GIT_SHALLOW     TRUE
-        SOURCE_DIR      ${ASIO_CMAKE_ASIO_DEP_DIR}
+        SOURCE_DIR      ${ASIO_SRC}
         )
 
 FetchContent_GetProperties(asio)
 
 if(NOT asio_POPULATED)
-    message(STATUS "Fetching asio ${ASIO_CMAKE_ASIO_TAG}")
+    message(STATUS "Fetching asio ${ASIO_TAG}")
 
-    if(EXISTS "${ASIO_CMAKE_ASIO_DEP_DIR}/asio")
-        set(FETCHCONTENT_SOURCE_DIR_ASIO ${ASIO_CMAKE_ASIO_DEP_DIR})
-        message(STATUS "asio ${ASIO_CMAKE_ASIO_TAG} source found at ${ASIO_CMAKE_ASIO_DEP_DIR}; skip fetching.")
+    if(EXISTS "${ASIO_SRC}/asio")
+        set(FETCHCONTENT_SOURCE_DIR_ASIO ${ASIO_SRC})
+        message(STATUS "asio ${ASIO_TAG} source found at ${ASIO_SRC}; skip fetching.")
     endif()
 
     FetchContent_Populate(asio)
-    message(STATUS "Populating asio ${ASIO_CMAKE_ASIO_TAG} done; src at ${asio_SOURCE_DIR}")
+    message(STATUS "Populating asio ${ASIO_TAG} done; src at ${asio_SOURCE_DIR}")
 endif()
 
 add_library(asio INTERFACE)
@@ -53,30 +53,32 @@ target_link_libraries(asio
         INTERFACE pthread
         )
 
-
 # Asio end ---------------------------------------------------------------------
 
 # sciter -----------------------------------------------------------------------
 
+set(SCITER_TAG "5.0.0.9")
+set(SCITER_SDK "${PROJECT_SOURCE_DIR}/../sciter-js-sdk")
+
 FetchContent_Declare(sciter
         GIT_REPOSITORY  https://gitlab.com/sciter-engine/sciter-js-sdk.git
-        GIT_TAG         "5.0.0.9"
+        GIT_TAG         ${SCITER_TAG}
         GIT_SHALLOW     TRUE
-        SOURCE_DIR      "${CMAKE_CURRENT_LIST_DIR}/sciter-js-sdk"
+        SOURCE_DIR      ${SCITER_SDK}
         )
 
 FetchContent_GetProperties(sciter)
 
 if(NOT sciter_POPULATED)
-    message(STATUS "Fetching sciter 5.0.0.9")
+    message(STATUS "Fetching sciter ${SCITER_TAG}")
 
-    if(EXISTS "${CMAKE_CURRENT_LIST_DIR}/sciter-js-sdk")
-        set(FETCHCONTENT_SOURCE_DIR_SCITER "${CMAKE_CURRENT_LIST_DIR}/sciter-js-sdk")
-        message(STATUS "sciter found; skip fetching.")
+    if(EXISTS "${SCITER_SDK}")
+        set(FETCHCONTENT_SOURCE_DIR_SCITER ${SCITER_SDK})
+        message(STATUS "sciter ${SCITER_TAG} found; skip fetching.")
     endif()
 
     FetchContent_Populate(sciter)
-    message(STATUS "Populating sciter done; src at ${sciter_SOURCE_DIR}")
+    message(STATUS "Populating sciter ${SCITER_TAG} done; src at ${sciter_SOURCE_DIR}")
 endif()
 
 add_library(sciter INTERFACE)
@@ -91,8 +93,6 @@ link_directories(${GTK3_LIBRARY_DIRS})
 
 # Add other flags to the compiler
 add_definitions(${GTK3_CFLAGS_OTHER})
-
-set(SCITER_SDK "${PROJECT_SOURCE_DIR}/sciter-js-sdk")
 
 include_directories("${SCITER_SDK}/include")
 

@@ -1,8 +1,10 @@
-cmake-build-debug/
 .idea/
 proto/CMakeLists.txt
+Sender/cmake-build-debug/
 Sender/resources.cpp
-Sender/sciter-js-sdk/
 Sender/proto/
-Sender/cmake-build-debug-unixmake/
+Receiver/resources.cpp
+Receiver/cmake-build-debug/
+sciter-js-sdk/
+asio-1-24-0-src/
 TestBroker/
