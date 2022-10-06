@@ -1,0 +1,28 @@
+<html lang="html">
+  <head>
+    <title>Receiver</title>
+    <style>
+      @import url(main.css);
+    </style>
+    <script type="module">
+      import "main.js";
+    </script>
+  </head>
+  <body>
+    <section #connection_section>
+      <label>
+        <input type="checkbox"/>
+        gRPC Enabled
+      </label>
+    </section>
+    <section #subscribe_to_topic_section>
+      <label>
+        Topic name
+        <input #topic_input_field type="text">
+      </label>
+      <button #btn_subscribe_to_topic .submit_btn>Subscribe</button>
+    </section>
+    <section #messages_section>
+    </section>
+  </body>
+</html>

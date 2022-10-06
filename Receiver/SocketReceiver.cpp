@@ -1,12 +1,17 @@
-#include "SocketSender.h"
+#include "SocketReceiver.h"
 
-SocketSender::SocketSender()
+SocketReceiver::SocketReceiver()
     : m_socket(m_io_context)
 {
     connectToBroker();
 }
 
-void SocketSender::connectToBroker()
+SocketReceiver::~SocketReceiver()
+{
+    m_socket.close();
+}
+
+void SocketReceiver::connectToBroker()
 {
     asio::ip::tcp::resolver resolver(m_io_context);
     const auto endpoints = resolver.resolve(BROKER_NAME
@@ -15,7 +20,7 @@ void SocketSender::connectToBroker()
     m_socket.connect(*(endpoints.begin()));
 }
 
-std::size_t SocketSender::sendStr(const std::string & str)
+std::size_t SocketReceiver::sendStrSync(const std::string & str)
 {
     if (m_socket.is_open())
         return m_socket.write_some(asio::buffer(str.data(), str.size()));
@@ -23,7 +28,7 @@ std::size_t SocketSender::sendStr(const std::string & str)
         return 0;
 }
 
-std::string SocketSender::receiveStr()
+std::string SocketReceiver::receiveStrSync()
 {
     if (!m_socket.is_open())
         return {};
@@ -46,32 +51,25 @@ std::string SocketSender::receiveStr()
     return stringStream.str();
 }
 
-bool SocketSender::createTopic(std::string topic)
+bool SocketReceiver::subscribeToTopic(std::string topic)
 {
     std::stringstream jsonMessage;
-    jsonMessage << R"({"action": "CREATE_TOPIC", "topic_name": ")"
+    jsonMessage << R"({"action": "SUBSCRIBE", "topic_to_subscribe": ")"
         << topic
         << "\"}";
 
     if (m_socket.is_open())
-        if (sendStr(jsonMessage.str()))
-            if (!receiveStr().empty())
+        if (sendStrSync(jsonMessage.str()))
+            if (!receiveStrSync().empty())
                 return true;
 
     return false;
 }
 
-bool SocketSender::publishMessage(std::string message)
+void SocketReceiver::listenForMessages(std::function<void(const std::string &)> handler)
 {
-    std::stringstream jsonMessage;
-    jsonMessage << R"({"action": "PUBLISH_MESSAGE", "message": ")"
-                << message
-                << "\"}";
-
-    if (m_socket.is_open())
-        if (sendStr(jsonMessage.str()))
-            if (!receiveStr().empty())
-                return true;
-
-    return false;
+    m_listenerThread = std::thread([this, handler]() -> void {
+       while (m_socket.is_open())
+           handler(receiveStrSync());
+    });
 }

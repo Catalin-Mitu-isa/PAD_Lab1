@@ -14,17 +14,16 @@ class SocketSender : public ISender
 {
 public:
     SocketSender();
-    bool createTopic(const std::string topic) override;
-    bool publishMessage(const std::string message) override;
+    bool createTopic(std::string topic) override;
+    bool publishMessage(std::string message) override;
 
 private:
     void connectToBroker();
-    bool readFromSocket(std::iostream & dataStream);
-    void asyncReader(const asio::error_code & error, std::size_t bytesTransfered);
+    std::size_t sendStr(const std::string & str);
+    std::string receiveStr();
 
     asio::io_context m_io_context;
     asio::ip::tcp::socket m_socket;
-    asio::streambuf m_streambuf;
 };
 
 #endif //SENDER_SOCKETSENDER_H
