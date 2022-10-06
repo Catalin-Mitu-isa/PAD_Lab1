@@ -2,8 +2,12 @@ package socket
 
 import (
 	"bufio"
+	"encoding/json"
 	"io"
 	"mr-l0n3lly/go-broker/internal/config"
+	"mr-l0n3lly/go-broker/internal/db"
+	"mr-l0n3lly/go-broker/internal/messages"
+	"mr-l0n3lly/go-broker/internal/models"
 	"mr-l0n3lly/go-broker/pkg/logging"
 	"net"
 	"strconv"
@@ -13,9 +17,10 @@ import (
 
 type Server struct {
 	sock net.Listener
+	DB   db.Database
 }
 
-func (s *Server) Start() {
+func (s *Server) Start(db db.Database) {
 	cfg := config.GetConfiguration()
 	logger := logging.GetLogger()
 
@@ -49,20 +54,52 @@ func (s *Server) handleClients(conn net.Conn) {
 		buf    = make([]byte, 1024)
 		r      = bufio.NewReader(conn)
 		logger = logging.GetLogger()
-		// w      = bufio.NewReader(conn)
+		w      = bufio.NewWriter(conn)
 	)
 
 CONNLOOP:
 	for {
 		n, err := r.Read(buf)
-		data := string(buf[:n])
+		data := buf[:n]
+		json_data := messages.SenderMessage{}
+		err = json.Unmarshal(data, &json_data)
+
+		switch json_data.Action {
+
+		case messages.CREATE_TOPIC_ACTION:
+			correct_data := messages.SenderCreateRequest{}
+			json.Unmarshal(data, &correct_data)
+
+			// Add topic to database
+			s.DB.AddTopic(models.Topic{
+				TopicName: correct_data.TopicName,
+			})
+
+			// Craft a response for sender
+			response := messages.SenderCreateResponse{
+				SenderResponse: messages.SenderResponse{
+					SenderMessage: messages.SenderMessage{
+						Action: messages.CREATE_TOPIC_ACTION,
+					},
+					Success: true,
+					Error:   "",
+				},
+			}
+
+			response_json, _ := json.Marshal(response)
+			w.Write(response_json)
+
+		case messages.PUBLISH_MESSAGE_ACTION:
+			correct_data := messages.SenderCreateRequest{}
+			json.Unmarshal(data, &correct_data)
+		}
 
 		switch err {
 		case io.EOF:
 			break CONNLOOP
 		case nil:
 			logger.Info("received: ", data)
-			if isTransportOver(data) {
+			if isTransportOver(string(data)) {
 				break CONNLOOP
 			}
 		default:
