@@ -11,20 +11,20 @@ enum CREATE_TOPIC_RESPONSE_ERRORS {
 // Messages --------------------------------------------------------------------
 
 message CreateTopicRequest {
-  optional string name = 1;
+  string name = 1;
 }
 
 message CreateTopicResponse {
-  optional bool success = 1;
-  optional CREATE_TOPIC_RESPONSE_ERRORS error = 2;
+  bool success = 1;
+  CREATE_TOPIC_RESPONSE_ERRORS error = 2;
 }
 
 message PublishMessageRequest {
-  optional string message = 1;
+  string message = 1;
 }
 
 message PublishMessageResponse {
-  optional bool success = 1;
+  bool success = 1;
 }
 
 // Services --------------------------------------------------------------------
