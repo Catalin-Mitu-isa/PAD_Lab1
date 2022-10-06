@@ -8,3 +8,8 @@ Receiver/cmake-build-debug/
 sciter-js-sdk/
 asio-1-24-0-src/
 TestBroker/
+grpc-v1.49.1
+Sender/Sender.grpc.pb.h
+Sender/Sender.grpc.pb.cc
+Sender/Sender.pb.h
+Sender/Sender.pb.cc

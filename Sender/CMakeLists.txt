@@ -10,6 +10,7 @@ pkg_check_modules(GTK3 REQUIRED gtk+-x11-3.0)
 
 # For automatic third party library setup
 include(FetchContent)
+set(FETCHCONTENT_QUIET OFF)
 
 # Asio -------------------------------------------------------------------------
 
@@ -21,6 +22,7 @@ FetchContent_Declare(asio
         GIT_TAG         ${ASIO_TAG}
         GIT_SHALLOW     TRUE
         SOURCE_DIR      ${ASIO_SRC}
+        GIT_PROGRESS    TRUE
         )
 
 FetchContent_GetProperties(asio)
@@ -65,6 +67,7 @@ FetchContent_Declare(sciter
         GIT_TAG         ${SCITER_TAG}
         GIT_SHALLOW     TRUE
         SOURCE_DIR      ${SCITER_SDK}
+        GIT_PROGRESS    TRUE
         )
 
 FetchContent_GetProperties(sciter)
@@ -84,6 +87,55 @@ endif()
 add_library(sciter INTERFACE)
 
 # sciter end -------------------------------------------------------------------
+
+# gRPC -------------------------------------------------------------------------
+
+set(ABSL_PROPAGATE_CXX_STD ON)
+
+set(GRPC_TAG "v1.49.1")
+set(GRPC_SRC "${PROJECT_SOURCE_DIR}/../grpc-${GRPC_TAG}")
+
+FetchContent_Declare(gRPC
+        GIT_REPOSITORY  https://github.com/grpc/grpc.git
+        GIT_TAG         ${GRPC_TAG}
+        GIT_SHALLOW     TRUE
+        SOURCE_DIR      ${GRPC_SRC}
+        GIT_PROGRESS    TRUE
+        )
+
+FetchContent_MakeAvailable(gRPC)
+
+# gRPC end ---------------------------------------------------------------------
+
+# generate proto ---------------------------------------------------------------
+
+#find_program(GRPC_CPP_PLUGIN grpc_cpp_plugin)
+#find_program(PROTO_COMPILER protoc)
+set(GRPC_CPP_PLUGIN "/home/catalin/.grpc/bin/grpc_cpp_plugin")
+set(PROTO_COMPILER "/home/catalin/.grpc/bin/protoc")
+message("GRPC_CPP_PLUGIN: ${GRPC_CPP_PLUGIN}")
+message("PROTO_COMPILER: ${PROTO_COMPILER}")
+
+get_filename_component(SENDER_PROTO_FILE ${PROJECT_SOURCE_DIR}/../proto/Sender/Sender.proto ABSOLUTE)
+get_filename_component(SENDER_PROTO_PATH ${SENDER_PROTO_FILE} PATH)
+
+#protoc --proto_path=../proto/Sender/ \
+#    --cpp_out=. \
+#    --grpc_out=. \
+#    --plugin=protoc-gen-grpc=grpc_cpp_plugin \
+#    ../proto/Sender/Sender.proto
+
+execute_process(
+        COMMAND
+        ${PROTO_COMPILER}
+        "--proto_path=${SENDER_PROTO_PATH}"
+        "--cpp_out=${PROJECT_SOURCE_DIR}"
+        "--grpc_out=${CMAKE_SOURCE_DIR}"
+        "--plugin=protoc-gen-grpc=${GRPC_CPP_PLUGIN}"
+        ${SENDER_PROTO_FILE}
+)
+
+# generate proto end -----------------------------------------------------------
 
 # Setup CMake to use GTK+, tell the compiler where to look for headers
 # and to the linker where to look for libraries
@@ -110,6 +162,8 @@ set(HEADERS
         ISender.h
         SocketSender.h
         RPCSender.h
+        Sender.pb.h
+        Sender.grpc.pb.h
         )
 
 set(SOURCES
@@ -119,13 +173,22 @@ set(SOURCES
         MainFrame.cpp
         SocketSender.cpp
         RPCSender.cpp
-        ${GENERATED_RESOURCES_FILE}
+        Sender.pb.cc
+        Sender.grpc.pb.cc
         )
 
-add_executable(Sender ${SOURCES} ${HEADERS} ${LIBRARY})
+add_executable(
+        ${PROJECT_NAME}
+        ${SOURCES}
+        ${HEADERS}
+        ${LIBRARY}
+        ${GENERATED_RESOURCES_FILE}
+        ${COMPILED_PROTO_FILE}
+        )
 
 # Link the target to the GTK+ libraries
-target_link_libraries(Sender ${GTK3_LIBRARIES} "${SCITER_SDK}/bin/linux/x64/libsciter.so")
-target_link_libraries(Sender asio)
+target_link_libraries(${PROJECT_NAME} ${GTK3_LIBRARIES} "${SCITER_SDK}/bin/linux/x64/libsciter.so")
+target_link_libraries(${PROJECT_NAME} asio)
+target_link_libraries(${PROJECT_NAME} grpc++)
 
 configure_file("${SCITER_SDK}/bin/linux/x64/libsciter.so" ${CMAKE_BINARY_DIR}/libsciter.so COPYONLY)

@@ -2,6 +2,8 @@
 #define SENDER_GRPCSENDER_H
 
 #include "ISender.h"
+#include "Sender.pb.h"
+#include "Sender.grpc.pb.h"
 
 class RPCSender : public ISender
 {
