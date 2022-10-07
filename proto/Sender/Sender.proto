@@ -29,10 +29,7 @@ message PublishMessageResponse {
 
 // Services --------------------------------------------------------------------
 
-service CreateTopic {
+service SenderService {
   rpc CreateTopic(CreateTopicRequest) returns (CreateTopicResponse);
-}
-
-service PublishMessage {
   rpc PublishMessage(PublishMessageRequest) returns (PublishMessageResponse);
 }
