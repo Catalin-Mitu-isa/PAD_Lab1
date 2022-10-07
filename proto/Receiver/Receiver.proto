@@ -10,7 +10,7 @@ enum SUBSCRIBE_TO_TOPIC_RESPONSE_ERRORS {
 
 // Messages -------------------------------------------------------------------
 
-message SubscribeTopicRequest {
+message SubscribeToTopicRequest {
     string name = 1;
 }
 
@@ -19,20 +19,16 @@ message SubscribeToTopicResponse {
     SUBSCRIBE_TO_TOPIC_RESPONSE_ERRORS error = 2;
 }
 
-message PublishMessageRequest {
-    string message = 1;
+message ReceiveMessageRequest {
 }
 
-message PublishMessageResponse {
-    // empty
+message ReceiveMessageResponse {
+    string message = 1;
 }
 
 // Services -------------------------------------------------------------------
 
 service SubscriberService {
-    rpc SubscribeToTopic(SubscribeTopicRequest) returns (SubscribeToTopicResponse);
-}
-
-service PublisherService {
-    rpc PublishMessage(PublishMessageRequest) returns (PublishMessageResponse);
+    rpc SubscribeToTopic(SubscribeToTopicRequest) returns (SubscribeToTopicResponse);
+    rpc ReceiveMessage(ReceiveMessageRequest) returns (ReceiveMessageResponse);
 }
