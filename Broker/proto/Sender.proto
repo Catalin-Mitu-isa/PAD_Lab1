@@ -1,0 +1,30 @@
+syntax = "proto3";
+
+package sender;
+option go_package = "./pkg/sender";
+
+// Messages --------------------------------------------------------------------
+
+message CreateTopicRequest {
+  string name = 1;
+}
+
+message CreateTopicResponse {
+  bool success = 1;
+  string error = 2;
+}
+
+message PublishMessageRequest {
+  string message = 1;
+}
+
+message PublishMessageResponse {
+  bool success = 1;
+}
+
+// Services --------------------------------------------------------------------
+
+service SenderService {
+  rpc CreateTopic(CreateTopicRequest) returns (CreateTopicResponse);
+  rpc PublishMessage(PublishMessageRequest) returns (PublishMessageResponse);
+}

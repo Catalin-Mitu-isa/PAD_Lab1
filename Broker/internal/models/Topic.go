@@ -1,8 +1,12 @@
 package models
 
-import "gorm.io/gorm"
+import (
+	"time"
+)
 
 type Topic struct {
-	gorm.Model
+	ID        uint   `gorm:"primarykey"`
 	TopicName string `gorm:"unique"`
+	CreatedAt time.Time
+	UpdatedAt time.Time
 }

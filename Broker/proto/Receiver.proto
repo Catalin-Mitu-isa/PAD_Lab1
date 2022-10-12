@@ -1,0 +1,21 @@
+syntax = "proto3";
+
+package receiver;
+option go_package = "./pkg/receiver";
+
+// Messages --------------------------------------------------------------------
+
+message SubscribeRequest {
+  string topicName = 1;
+}
+
+message SubscribeResponse {
+  bool success = 1;
+  string error = 2;
+}
+
+// Services --------------------------------------------------------------------
+
+service ReceiverService {
+  rpc Subscribe(SubscribeRequest) returns (SubscribeResponse);
+}

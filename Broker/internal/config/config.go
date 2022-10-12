@@ -21,6 +21,10 @@ type Config struct {
 		Host string `env:"BROKER_HOST"`
 		Port int    `env:"BROKER_TCP_PORT"`
 	}
+	GrpcServer struct {
+		Host string `env:"BROKER_HOST"`
+		Port int    `env:"BROKER_GRPC_PORT"`
+	}
 }
 
 var instance *Config

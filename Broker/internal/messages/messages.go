@@ -1,33 +1,22 @@
 package messages
 
-const CREATE_TOPIC_ACTION string = "CREATE_TOPIC"
-const PUBLISH_MESSAGE_ACTION string = "PUBLISH_MESSAGE"
-const SUBSCRIBE_ACTION string = "SUBSCRIBE"
+const CreateTopicAction string = "CREATE_TOPIC"
+const PublishMessageAction string = "PUBLISH_MESSAGE"
+const SubscribeAction string = "SUBSCRIBE"
 
-type SenderMessage struct {
-	Action string `json:"action"`
+type Data struct {
+	Id uint `json:"id"`
 }
 
-type SenderCreateRequest struct {
-	SenderMessage
+type SenderRequest struct {
+	Action    string `json:"action"`
 	TopicName string `json:"topic_name"`
-}
-
-type SenderPublishRequest struct {
-	SenderMessage
-	Message string `json:"message"`
+	Message   string `json:"message"`
 }
 
 type SenderResponse struct {
-	SenderMessage
+	Action  string `json:"action"`
 	Success bool   `json:"success"`
+	Data    Data   `json:"data"`
 	Error   string `json:"error"`
-}
-
-type SenderCreateResponse struct {
-	SenderResponse
-}
-
-type SenderPublishResponse struct {
-	SenderResponse
 }

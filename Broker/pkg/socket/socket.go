@@ -4,10 +4,10 @@ import (
 	"bufio"
 	"encoding/json"
 	"io"
+	"mr-l0n3lly/go-broker/internal/client"
 	"mr-l0n3lly/go-broker/internal/config"
 	"mr-l0n3lly/go-broker/internal/db"
 	"mr-l0n3lly/go-broker/internal/messages"
-	"mr-l0n3lly/go-broker/internal/models"
 	"mr-l0n3lly/go-broker/pkg/logging"
 	"net"
 	"strconv"
@@ -21,12 +21,18 @@ type Server struct {
 }
 
 func (s *Server) Start(db db.Database) {
+	s.DB = db
 	cfg := config.GetConfiguration()
 	logger := logging.GetLogger()
 
 	var err error
 
-	s.sock, err = net.Listen("tcp4", cfg.SocketServer.Host+":"+strconv.Itoa(cfg.SocketServer.Port))
+	addr := net.TCPAddr{
+		Port: cfg.SocketServer.Port,
+		IP:   net.ParseIP(cfg.SocketServer.Host),
+	}
+
+	s.sock, err = net.ListenTCP("tcp", &addr)
 	logger.Info(cfg.SocketServer.Host + ":" + strconv.Itoa(cfg.SocketServer.Port))
 	if err != nil {
 		logger.Fatal("socket listen port failed")
@@ -48,58 +54,56 @@ func (s *Server) Start(db db.Database) {
 }
 
 func (s *Server) handleClients(conn net.Conn) {
-	defer conn.Close()
-
 	var (
 		buf    = make([]byte, 1024)
 		r      = bufio.NewReader(conn)
 		logger = logging.GetLogger()
-		w      = bufio.NewWriter(conn)
+		data   = make([]byte, 1)
+		//w      = bufio.NewWriter(conn)
 	)
 
 CONNLOOP:
 	for {
 		n, err := r.Read(buf)
-		data := buf[:n]
-		json_data := messages.SenderMessage{}
-		err = json.Unmarshal(data, &json_data)
-
-		switch json_data.Action {
-
-		case messages.CREATE_TOPIC_ACTION:
-			correct_data := messages.SenderCreateRequest{}
-			json.Unmarshal(data, &correct_data)
-
-			// Add topic to database
-			s.DB.AddTopic(models.Topic{
-				TopicName: correct_data.TopicName,
-			})
-
-			// Craft a response for sender
-			response := messages.SenderCreateResponse{
-				SenderResponse: messages.SenderResponse{
-					SenderMessage: messages.SenderMessage{
-						Action: messages.CREATE_TOPIC_ACTION,
-					},
-					Success: true,
-					Error:   "",
-				},
-			}
-
-			response_json, _ := json.Marshal(response)
-			w.Write(response_json)
-
-		case messages.PUBLISH_MESSAGE_ACTION:
-			correct_data := messages.SenderCreateRequest{}
-			json.Unmarshal(data, &correct_data)
-		}
+		data = append(data, buf[:n]...)
 
 		switch err {
 		case io.EOF:
+			logger.Error("%v", err)
 			break CONNLOOP
 		case nil:
-			logger.Info("received: ", data)
+			logger.Info("received: ", string(data))
 			if isTransportOver(string(data)) {
+				jsonData := messages.SenderRequest{}
+				err = json.Unmarshal(data[1:], &jsonData)
+
+				if err != nil {
+					logger.Error("%v", err)
+					break CONNLOOP
+				}
+
+				messagesHandler := client.Handler{
+					DB: s.DB,
+				}
+
+				response, err := messagesHandler.ParseMessage(jsonData, &conn)
+
+				if err != nil {
+					logger.Error("%v", err)
+				}
+
+				logger.Info(string(response))
+
+				_, err = conn.Write(response)
+
+				if err != nil {
+					logger.Error("%v", err)
+				}
+
+				if jsonData.Action != messages.SubscribeAction {
+					defer conn.Close()
+				}
+
 				break CONNLOOP
 			}
 		default:
