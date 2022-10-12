@@ -3,7 +3,7 @@ Sender
 Request:  {"action": "CREATE_TOPIC", "topic_name": "<value>"}
 Response: {"action": "CREATE_TOPIC", "success": "<bool_value>", "error": "<error>"}
 
-Request:  {"action": "PUBLISH_MESSAGE", "message": "<value>"}
+Request:  {"action": "PUBLISH_MESSAGE", "topic_name": "<value>", "message": "<value>"}
 Response: {"action": "PUBLISH_MESSAGE", "success": "<bool_value", "error": "<error>"}
 
 
