@@ -3,7 +3,11 @@
 SocketSender::SocketSender()
     : m_socket(m_io_context)
 {
-    connectToBroker();
+    try {
+        connectToBroker();
+    } catch (const std::exception & exc) {
+        std::cout << exc.what() << std::endl;
+    }
 }
 
 void SocketSender::connectToBroker()

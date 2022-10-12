@@ -1,4 +1,34 @@
 syntax = "proto3";
 
-// Messages --------------------------------------------------------------------
+// Enums ----------------------------------------------------------------------
 
+enum SUBSCRIBE_TO_TOPIC_RESPONSE_ERRORS {
+    NONE = 0;
+    OTHER = 1;
+    INEXISTING = 2;
+}
+
+// Messages -------------------------------------------------------------------
+
+message SubscribeToTopicRequest {
+    string name = 1;
+}
+
+message SubscribeToTopicResponse {
+    bool success = 1;
+    SUBSCRIBE_TO_TOPIC_RESPONSE_ERRORS error = 2;
+}
+
+message ReceiveMessageRequest {
+}
+
+message ReceiveMessageResponse {
+    string message = 1;
+}
+
+// Services -------------------------------------------------------------------
+
+service SubscriberService {
+    rpc SubscribeToTopic(SubscribeToTopicRequest) returns (SubscribeToTopicResponse);
+    rpc ReceiveMessage(ReceiveMessageRequest) returns (ReceiveMessageResponse);
+}

@@ -85,6 +85,25 @@ add_library(sciter INTERFACE)
 
 # sciter end -------------------------------------------------------------------
 
+# grpc -------------------------------------------------------------------------
+
+set(ABSL_PROPAGATE_CXX_STD ON)
+
+set(GRPC_TAG "v1.49.1")
+set(GRPC_SRC "${PROJECT_SOURCE_DIR}/../grpc-${GRPC_TAG}")
+
+FetchContent_Declare(gRPC
+        GIT_REPOSITORY  https://github.com/grpc/grpc.git
+        GIT_TAG         ${GRPC_TAG}
+        GIT_SHALLOW     TRUE
+        SOURCE_DIR      ${GRPC_SRC}
+        GIT_PROGRESS    TRUE
+        )
+
+FetchContent_MakeAvailable(gRPC)
+
+# grpc end ---------------------------------------------------------------------
+
 # Setup CMake to use GTK+, tell the compiler where to look for headers
 # and to the linker where to look for libraries
 include_directories(${GTK3_INCLUDE_DIRS})
@@ -110,6 +129,8 @@ set(HEADERS
         IReceiver.h
         SocketReceiver.h
         RPCReceiver.h
+        Receiver.pb.h
+        Receiver.grpc.pb.h
         )
 
 set(SOURCES
@@ -119,13 +140,21 @@ set(SOURCES
         MainFrame.cpp
         SocketReceiver.cpp
         RPCReceiver.cpp
-        ${GENERATED_RESOURCES_FILE}
+        Receiver.pb.cc
+        Receiver.grpc.pb.cc
         )
 
-add_executable(${PROJECT_NAME} ${SOURCES} ${HEADERS} ${LIBRARY})
+add_executable(
+        ${PROJECT_NAME}
+        ${SOURCES}
+        ${HEADERS}
+        ${LIBRARY}
+        ${GENERATED_RESOURCES_FILE}
+        )
 
 # Link the target to the GTK+ libraries
 target_link_libraries(${PROJECT_NAME} ${GTK3_LIBRARIES} "${SCITER_SDK}/bin/linux/x64/libsciter.so")
 target_link_libraries(${PROJECT_NAME} asio)
+target_link_libraries(${PROJECT_NAME} grpc++)
 
 configure_file("${SCITER_SDK}/bin/linux/x64/libsciter.so" ${CMAKE_BINARY_DIR}/libsciter.so COPYONLY)
