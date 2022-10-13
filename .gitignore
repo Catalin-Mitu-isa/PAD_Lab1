@@ -16,6 +16,10 @@ Receiver/Receiver.grpc.pb.h
 Receiver/Receiver.pb.h
 Receiver/Receiver.grpc.pb.cc
 Receiver/Receiver.pb.cc
+Receiver/Broker.grpc.pb.h
+Receiver/Broker.pb.h
+Receiver/Broker.grpc.pb.cc
+Receiver/Broker.pb.cc
 TestBrokerReceiver/
 TestBrokerSender/
 grpc-v1.49.1-test/
