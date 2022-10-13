@@ -8,7 +8,6 @@ import (
 type Subscriber struct {
 	TopicName string `json:"topic_name"`
 	Conn      *net.Conn
-	Addr      net.Addr
 }
 
 var subscribers = make([]Subscriber, 0)
@@ -45,11 +44,11 @@ func (s Subscriber) GetTopicSubscribers(topicName string) []Subscriber {
 	return topicSubscribers
 }
 
-func (s Subscriber) RemoveTopicSubscriber(addr net.Addr) {
+func (s Subscriber) RemoveTopicSubscriber(conn *net.Conn) {
 	index := -1
 
 	for i, el := range subscribers {
-		if el.Addr == addr {
+		if el.Conn == conn {
 			index = i
 		}
 	}

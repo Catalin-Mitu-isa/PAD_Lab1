@@ -7,6 +7,8 @@ option go_package = "./pkg/receiver";
 
 message SubscribeRequest {
   string topicName = 1;
+  string hostName = 2;
+  int32 port = 3;
 }
 
 message SubscribeResponse {
@@ -14,8 +16,17 @@ message SubscribeResponse {
   string error = 2;
 }
 
+message GetMessageRequest {
+  string message = 1;
+}
+
+message GetMessageResponse {
+  bool success = 1;
+}
+
 // Services --------------------------------------------------------------------
 
 service ReceiverService {
   rpc Subscribe(SubscribeRequest) returns (SubscribeResponse);
+  rpc GetMessage(GetMessageRequest) returns (GetMessageResponse);
 }

@@ -16,8 +16,17 @@ message SubscribeResponse {
   string error = 2;
 }
 
+message GetMessageRequest {
+  string message = 1;
+}
+
+message GetMessageResponse {
+  bool success = 1;
+}
+
 // Services --------------------------------------------------------------------
 
 service ReceiverService {
   rpc Subscribe(SubscribeRequest) returns (SubscribeResponse);
+  rpc GetMessage(GetMessageRequest) returns (GetMessageResponse);
 }

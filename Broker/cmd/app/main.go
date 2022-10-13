@@ -3,8 +3,10 @@ package main
 import (
 	"mr-l0n3lly/go-broker/internal/db"
 	"mr-l0n3lly/go-broker/internal/models"
-	grpc_server "mr-l0n3lly/go-broker/pkg/grpc-server"
+	GRPCServer "mr-l0n3lly/go-broker/pkg/grpc-server"
 	"mr-l0n3lly/go-broker/pkg/logging"
+	"mr-l0n3lly/go-broker/pkg/receiver"
+	"mr-l0n3lly/go-broker/pkg/sender"
 	"mr-l0n3lly/go-broker/pkg/socket"
 	"sync"
 
@@ -30,7 +32,10 @@ func main() {
 
 	database := db.Init(d)
 	socketServer := socket.GetSocketServer()
-	grpcServer := grpc_server.GetGrpcServer()
+	grpcServer := GRPCServer.GetGrpcServer()
+
+	receiver.RegisterReceiverServiceServer(grpcServer.GRPCServer, &receiver.ReceiverService{})
+	sender.RegisterSenderServiceServer(grpcServer.GRPCServer, &sender.SenderService{})
 
 	waitGroup.Add(2)
 

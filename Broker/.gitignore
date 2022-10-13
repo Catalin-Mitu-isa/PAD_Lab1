@@ -1,2 +1,6 @@
 main
 .idea
+**/*.pb.go
+
+broker.db
+logs

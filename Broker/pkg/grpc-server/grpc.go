@@ -9,7 +9,7 @@ import (
 )
 
 type Server struct {
-	grpcServer *grpc.Server
+	GRPCServer *grpc.Server
 }
 
 var instance *Server
@@ -17,7 +17,7 @@ var instance *Server
 func GetGrpcServer() *Server {
 	if instance == nil {
 		instance = &Server{
-			grpcServer: grpc.NewServer(),
+			GRPCServer: grpc.NewServer(),
 		}
 	}
 
@@ -40,9 +40,9 @@ func (s *Server) Start() {
 		logger.Fatal("grpc listen port failed")
 	}
 
-	s.grpcServer.RegisterService()
+	// s.grpcServer.RegisterService()
 
-	if err = s.grpcServer.Serve(socket); err != nil {
+	if err = s.GRPCServer.Serve(socket); err != nil {
 		logger.Fatal("failed to serve: %v", err)
 	}
 }

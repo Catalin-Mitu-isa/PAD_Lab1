@@ -16,9 +16,18 @@ message CreateTopicResponse {
 
 message PublishMessageRequest {
   string message = 1;
+  string topicName = 2;
 }
 
 message PublishMessageResponse {
+  bool success = 1;
+}
+
+message SendMessageRequest {
+  string message = 1;
+}
+
+message SendMessageResponse {
   bool success = 1;
 }
 
@@ -27,4 +36,5 @@ message PublishMessageResponse {
 service SenderService {
   rpc CreateTopic(CreateTopicRequest) returns (CreateTopicResponse);
   rpc PublishMessage(PublishMessageRequest) returns (PublishMessageResponse);
+  rpc SendMessage(SendMessageRequest) returns (SendMessageResponse);
 }

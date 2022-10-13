@@ -2,18 +2,37 @@ package receiver
 
 import (
 	"context"
-	grpc_server "mr-l0n3lly/go-broker/pkg/grpc-server"
+	"mr-l0n3lly/go-broker/pkg/logging"
 )
 
-type Receiver struct {
+type GrpcSubscriber struct {
+	TopicName string
+	HostName  string
+	Port      int32
 }
 
-func (*Receiver) Subscribe(ctx context.Context, request *grpc_server.SubscribeRequest) *grpc_server.SubscribeResponse {
-	topicName := request.TopicName
+var subscribers = make([]GrpcSubscriber, 0)
 
-	response := &grpc_server.SubscribeResponse{
+type ReceiverService struct {
+	UnimplementedReceiverServiceServer
+}
+
+func (r *ReceiverService) Subscribe(ctx context.Context, request *SubscribeRequest) (*SubscribeResponse, error) {
+	logger := logging.GetLogger()
+
+	logger.Info("subscribing client")
+
+	subscribers = append(subscribers, GrpcSubscriber{
+		TopicName: request.TopicName,
+		HostName:  request.HostName,
+		Port:      request.Port,
+	})
+
+	return &SubscribeResponse{
 		Success: true,
-	}
+	}, nil
+}
 
-	return response
+func GetGRPCSubscribers() []GrpcSubscriber {
+	return subscribers
 }

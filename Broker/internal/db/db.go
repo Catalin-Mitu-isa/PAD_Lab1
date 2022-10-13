@@ -9,10 +9,21 @@ type Database struct {
 	DB *gorm.DB
 }
 
+var instance *Database
+
 func Init(db *gorm.DB) *Database {
-	return &Database{
-		DB: db,
+
+	if instance == nil {
+		instance = &Database{
+			DB: db,
+		}
 	}
+
+	return instance
+}
+
+func GetDatabase() *Database {
+	return instance
 }
 
 func (db Database) AddTopic(s models.Topic) (uint, error) {

@@ -4,10 +4,8 @@ WORKDIR /broker
 
 COPY . .
 
-RUN go mod download
-
-RUN go build -o ./broker ./cmd/app
+RUN make
 
 EXPOSE 43200 43201
 
-CMD ["/broker/broker"]
+CMD ["make", "run"]
