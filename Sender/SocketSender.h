@@ -24,6 +24,7 @@ private:
 
     asio::io_context m_io_context;
     asio::ip::tcp::socket m_socket;
+    std::string m_topicName;
 };
 
 #endif //SENDER_SOCKETSENDER_H

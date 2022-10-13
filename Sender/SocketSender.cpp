@@ -60,7 +60,11 @@ bool SocketSender::createTopic(std::string topic)
     if (m_socket.is_open())
         if (sendStr(jsonMessage.str()))
             if (!receiveStr().empty())
+            {
+                if (m_topicName.empty())
+                    m_topicName = topic;
                 return true;
+            }
 
     return false;
 }
@@ -70,6 +74,8 @@ bool SocketSender::publishMessage(std::string message)
     std::stringstream jsonMessage;
     jsonMessage << R"({"action": "PUBLISH_MESSAGE", "message": ")"
                 << message
+                << R"(", "topic_name": ")"
+                << m_topicName
                 << "\"}";
 
     if (m_socket.is_open())
