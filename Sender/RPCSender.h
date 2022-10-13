@@ -1,7 +1,7 @@
 #ifndef SENDER_GRPCSENDER_H
 #define SENDER_GRPCSENDER_H
 
-#define BROKER_GRPC_PORT 8081
+#define BROKER_GRPC_PORT 43201
 #define BROKER_NAME "broker.pad.utm.md"
 
 #include <sstream>
