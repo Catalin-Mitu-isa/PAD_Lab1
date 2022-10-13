@@ -14,7 +14,7 @@ import (
 	"gorm.io/gorm"
 )
 
-func main() {
+func dmain() {
 	var waitGroup sync.WaitGroup
 
 	logger := logging.GetLogger()

@@ -100,9 +100,9 @@ CONNLOOP:
 					logger.Error("%v", err)
 				}
 
-				if jsonData.Action != messages.SubscribeAction {
-					defer conn.Close()
-				}
+				//if jsonData.Action != messages.SubscribeAction {
+				//	defer conn.Close()
+				//}
 
 				break CONNLOOP
 			}
