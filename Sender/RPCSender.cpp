@@ -15,7 +15,10 @@ bool RPCSender::createTopic(const std::string topic)
     sender::CreateTopicResponse response;
     request.set_name(topic);
     m_stub->CreateTopic(&ctx, request, &response);
-    return response.success();
+    const bool createSuccessful = response.success();
+    if (createSuccessful)
+        m_topicName = topic;
+    return createSuccessful;
 }
 
 bool RPCSender::publishMessage(const std::string message)
@@ -24,6 +27,7 @@ bool RPCSender::publishMessage(const std::string message)
     sender::PublishMessageRequest request;
     sender::PublishMessageResponse response;
     request.set_message(message);
+    request.set_topicname(m_topicName);
     m_stub->PublishMessage(&ctx, request, &response);
     return response.success();
 }

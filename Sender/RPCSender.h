@@ -20,6 +20,7 @@ public:
 
 private:
     std::unique_ptr<sender::SenderService::Stub> m_stub;
+    std::string m_topicName;
 };
 
 
