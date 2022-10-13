@@ -19,7 +19,7 @@ public:
     bool publishMessage(const std::string message) override;
 
 private:
-    std::unique_ptr<SenderService::Stub> m_stub;
+    std::unique_ptr<sender::SenderService::Stub> m_stub;
 };
 
 
