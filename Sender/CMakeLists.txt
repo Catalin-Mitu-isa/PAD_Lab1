@@ -116,10 +116,10 @@ set(PROTO_COMPILER "/home/catalin/.grpc/bin/protoc")
 message("GRPC_CPP_PLUGIN: ${GRPC_CPP_PLUGIN}")
 message("PROTO_COMPILER: ${PROTO_COMPILER}")
 
-get_filename_component(SENDER_PROTO_FILE ${PROJECT_SOURCE_DIR}/../proto/Sender/Sender.proto ABSOLUTE)
+get_filename_component(SENDER_PROTO_FILE ${PROJECT_SOURCE_DIR}/../proto/Sender.proto ABSOLUTE)
 get_filename_component(SENDER_PROTO_PATH ${SENDER_PROTO_FILE} PATH)
 
-#/home/catalin/.grpc/bin/protoc --proto_path=../proto/Sender/ --cpp_out=. --grpc_out=. --plugin=protoc-gen-grpc=/home/catalin/.grpc/bin/grpc_cpp_plugin ../proto/Sender/Sender.proto
+#/home/catalin/.grpc/bin/protoc --proto_path=../proto/ --cpp_out=. --grpc_out=. --plugin=protoc-gen-grpc=/home/catalin/.grpc/bin/grpc_cpp_plugin ../proto/Sender.proto
 
 execute_process(
         COMMAND

@@ -104,6 +104,32 @@ FetchContent_MakeAvailable(gRPC)
 
 # grpc end ---------------------------------------------------------------------
 
+# generate proto ---------------------------------------------------------------
+
+#find_program(GRPC_CPP_PLUGIN grpc_cpp_plugin)
+#find_program(PROTO_COMPILER protoc)
+set(GRPC_CPP_PLUGIN "/home/catalin/.grpc/bin/grpc_cpp_plugin")
+set(PROTO_COMPILER "/home/catalin/.grpc/bin/protoc")
+message("GRPC_CPP_PLUGIN: ${GRPC_CPP_PLUGIN}")
+message("PROTO_COMPILER: ${PROTO_COMPILER}")
+
+get_filename_component(RECEIVER_PROTO_FILE ${PROJECT_SOURCE_DIR}/../proto/Receiver.proto ABSOLUTE)
+get_filename_component(RECEIVER_PROTO_PATH ${RECEIVER_PROTO_FILE} PATH)
+
+#/home/catalin/.grpc/bin/protoc --proto_path=../proto/ --cpp_out=. --grpc_out=. --plugin=protoc-gen-grpc=/home/catalin/.grpc/bin/grpc_cpp_plugin ../proto/Receiver.proto
+
+execute_process(
+        COMMAND
+        ${PROTO_COMPILER}
+        "--proto_path=${RECEIVER_PROTO_PATH}"
+        "--cpp_out=${PROJECT_SOURCE_DIR}"
+        "--grpc_out=${CMAKE_SOURCE_DIR}"
+        "--plugin=protoc-gen-grpc=${GRPC_CPP_PLUGIN}"
+        ${RECEIVER_PROTO_FILE}
+)
+
+# generate proto end -----------------------------------------------------------
+
 # Setup CMake to use GTK+, tell the compiler where to look for headers
 # and to the linker where to look for libraries
 include_directories(${GTK3_INCLUDE_DIRS})
