@@ -9,10 +9,12 @@ all: deps proto
 	@go build -o ./${NAME} ${APP}
 
 deps:
+	$(info [+] Download go grpc)
+	@go get google.golang.org/grpc/cmd/protoc-gen-go-grpc
 	$(info [+] Downloading all dependencies)
 	@go mod download
 
-proto: deps
+proto:
 	$(info [+] Generating proto files)
 	@protoc --go_out=. --go_opt=paths=source_relative --go-grpc_out=. --go-grpc_opt=paths=source_relative ./proto/*.proto
 	$(info [+] Moving Receiver proto files to right directory)

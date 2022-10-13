@@ -7,9 +7,6 @@ services:
     ports:
       - '43200:${BROKER_TCP_PORT}'
       - '43201:${BROKER_GRPC_PORT}'
-    depends_on:
-      - mongo
-      - redis
     networks:
       - message-broker
 networks:

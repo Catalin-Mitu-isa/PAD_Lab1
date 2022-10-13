@@ -55,25 +55,10 @@ func init() {
 		ForceColors:   true,
 	}
 
-	_, err := os.Stat("logs")
-
-	if os.IsNotExist(err) {
-		err := os.Mkdir("logs", 0744)
-		if err != nil {
-			panic(err)
-		}
-	}
-
-	allFile, err := os.OpenFile("logs/all.log", os.O_CREATE|os.O_WRONLY|os.O_APPEND, 740)
-
-	if err != nil {
-		panic(err)
-	}
-
 	l.SetOutput(io.Discard)
 
 	l.AddHook(&writerHook{
-		Writer:    []io.Writer{allFile, os.Stdout},
+		Writer:    []io.Writer{os.Stdout},
 		LogLevels: logrus.AllLevels,
 	})
 
