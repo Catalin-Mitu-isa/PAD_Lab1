@@ -1,0 +1,20 @@
+syntax = "proto3";
+
+package broker;
+option go_package = "./pkg/broker";
+
+// Messages --------------------------------------------------------------------
+
+message SendMessageRequest {
+  string message = 1;
+}
+
+message SendMessageResponse {
+  bool success = 1;
+}
+
+// Services --------------------------------------------------------------------
+
+service BrokerService {
+  rpc SendMessage(SendMessageRequest) returns (SendMessageResponse);
+}

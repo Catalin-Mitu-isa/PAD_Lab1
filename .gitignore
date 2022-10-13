@@ -19,3 +19,4 @@ Receiver/Receiver.pb.cc
 TestBrokerReceiver/
 TestBrokerSender/
 grpc-v1.49.1-test/
+**/.DS_Store

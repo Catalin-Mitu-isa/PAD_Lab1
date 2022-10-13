@@ -5,6 +5,7 @@ import (
 	"google.golang.org/grpc"
 	"mr-l0n3lly/go-broker/internal/db"
 	"mr-l0n3lly/go-broker/internal/models"
+	"mr-l0n3lly/go-broker/pkg/broker"
 	"mr-l0n3lly/go-broker/pkg/logging"
 	"mr-l0n3lly/go-broker/pkg/receiver"
 	"strconv"
@@ -46,11 +47,11 @@ func (s *SenderService) PublishMessage(ctx context.Context, request *PublishMess
 			if err != nil {
 				continue
 			}
-			payload := &SendMessageRequest{
+			payload := &broker.SendMessageRequest{
 				Message: request.Message,
 			}
 
-			client := NewSenderServiceClient(conn)
+			client := broker.NewBrokerServiceClient(conn)
 
 			_, err = client.SendMessage(context.Background(), payload)
 

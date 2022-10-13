@@ -16,7 +16,7 @@ type Handler struct {
 
 func (c Handler) createTopicAction(jsonData messages.SenderRequest) (response messages.SenderResponse) {
 	// Add topic to database
-	uid, err := c.DB.AddTopic(models.Topic{
+	_, err := c.DB.AddTopic(models.Topic{
 		TopicName: jsonData.TopicName,
 	})
 
@@ -24,18 +24,12 @@ func (c Handler) createTopicAction(jsonData messages.SenderRequest) (response me
 		response = messages.SenderResponse{
 			Action:  messages.CreateTopicAction,
 			Success: false,
-			Data: messages.Data{
-				Id: uid,
-			},
-			Error: err.Error(),
+			Error:   err.Error(),
 		}
 	} else {
 		response = messages.SenderResponse{
 			Action:  messages.CreateTopicAction,
 			Success: true,
-			Data: messages.Data{
-				Id: uid,
-			},
 		}
 	}
 

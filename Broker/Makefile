@@ -19,6 +19,8 @@ proto: deps
 	@mv ./proto/R*.pb* ./pkg/receiver
 	$(info [+] Moving Sender proto files to right directory)
 	@mv ./proto/S*.pb* ./pkg/sender
+	$(info [+] Moving Broker proto files to right directory)
+	@mv ./proto/B*.pb* ./pkg/broker
 
 run: all
 	$(info [+] Running brocker)

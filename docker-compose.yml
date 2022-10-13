@@ -12,32 +12,5 @@ services:
       - redis
     networks:
       - message-broker
-
-  mongo:
-    container_name: go-broker-mongo
-    image: 'mongo:4'
-    ports:
-      - '27017:${MONGO_PORT}'
-    restart: always
-    environment:
-      - MONGO_DATA_DIR=${MONGO_DATA_DIR}
-      - MONGO_LOG_DIR=${MONGO_LOG_DIR}
-    volumes:
-      - mongo-data:/data/db
-    command: mongod --smallfiles --logpath=/dev/null # --quiet
-    networks:
-      - message-broker
-
-  redis:
-    container_name: go-broker-redis
-    image: 'redis:4.0.11'
-    restart: always
-    ports:
-      - '6379:${REDIS_PORT}'
-    networks:
-      - message-broker
-
-volumes:
-  mongo-data:
 networks:
   message-broker:

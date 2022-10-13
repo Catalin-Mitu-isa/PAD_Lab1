@@ -9,7 +9,7 @@ Response: {"action": "PUBLISH_MESSAGE", "success": "<bool_value", "error": "<err
 
 Receiver
 
-Request:  {"action": "SUBSCRIBE", "topic_to_subscribe": "<value>"}
+Request:  {"action": "SUBSCRIBE", "topic_name": "<value>"}
 Response: {"action": "SUBSCRIBE", "success": "<bool_value", "error": "<error>"}
 
 
