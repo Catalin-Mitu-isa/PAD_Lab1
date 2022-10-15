@@ -7,7 +7,7 @@
 #include <array>
 #include <iostream>
 
-#define BROKER_SOCKET_PORT 8080
+#define BROKER_SOCKET_PORT 43200
 #define BROKER_NAME "broker.pad.utm.md"
 
 class SocketSender : public ISender

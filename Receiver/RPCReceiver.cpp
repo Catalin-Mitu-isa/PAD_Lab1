@@ -3,39 +3,50 @@
 RPCReceiver::RPCReceiver()
     : m_listeningForMessages(false)
 {
-    std::stringstream channelAddress;
-    channelAddress << BROKER_NAME << ':' << BROKER_GRPC_PORT;
-    auto channel = grpc::CreateChannel(channelAddress.str(), grpc::InsecureChannelCredentials());
-    m_stub = SubscriberService::NewStub(std::move(channel));
+    createStub();
+    createListenerServer();
 }
 
 RPCReceiver::~RPCReceiver()
 {
     m_listeningForMessages = false;
+    m_server->Shutdown();
+    m_server->Wait();
+}
+
+void RPCReceiver::createStub()
+{
+    std::stringstream channelAddress;
+    channelAddress << BROKER_NAME << ':' << BROKER_GRPC_PORT;
+    auto channel = grpc::CreateChannel(channelAddress.str(), grpc::InsecureChannelCredentials());
+    m_stub = receiver::ReceiverService::NewStub(std::move(channel));
+}
+
+void RPCReceiver::createListenerServer()
+{
+    grpc::ServerBuilder serverBuilder;
+    {
+        std::stringstream ss;
+        ss << RECEIVER_HOSTNAME << ':' << RECEIVER_GRPC_PORT;
+        serverBuilder.AddListeningPort(ss.str(), grpc::InsecureServerCredentials());
+    }
+    serverBuilder.RegisterService(&m_listenerService);
+    m_server = serverBuilder.BuildAndStart();
 }
 
 bool RPCReceiver::subscribeToTopic(std::string topic)
 {
     grpc::ClientContext ctx;
-    SubscribeToTopicRequest request;
-    SubscribeToTopicResponse response;
-    request.set_name(topic);
-    m_stub->SubscribeToTopic(&ctx, request, &response);
-    return true;
+    receiver::SubscribeRequest request;
+    receiver::SubscribeResponse response;
+    request.set_topicname(topic);
+    request.set_hostname(RECEIVER_HOSTNAME);
+    request.set_port(RECEIVER_GRPC_PORT);
+    m_stub->Subscribe(&ctx, request, &response);
+    return response.success();
 }
 
 void RPCReceiver::listenForMessages(std::function<void(const std::string &)> handler)
 {
-    m_listeningForMessages = true;
-    m_listenerThread = std::thread([this, handler=handler]() ->void {
-        while (m_listeningForMessages)
-        {
-            grpc::ClientContext ctx;
-            ReceiveMessageRequest request;
-            ReceiveMessageResponse response;
-            m_stub->ReceiveMessage(&ctx, request, &response);
-            std::cout << "Message received: " << response.message() << std::endl;
-            handler(response.message());
-        }
-    });
+    m_listenerService.setMsgHandler(handler);
 }

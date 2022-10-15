@@ -114,18 +114,20 @@ message("GRPC_CPP_PLUGIN: ${GRPC_CPP_PLUGIN}")
 message("PROTO_COMPILER: ${PROTO_COMPILER}")
 
 get_filename_component(RECEIVER_PROTO_FILE ${PROJECT_SOURCE_DIR}/../proto/Receiver.proto ABSOLUTE)
-get_filename_component(RECEIVER_PROTO_PATH ${RECEIVER_PROTO_FILE} PATH)
+get_filename_component(PROTO_FILES_PATH ${RECEIVER_PROTO_FILE} PATH)
+get_filename_component(BROKER_PROTO_FILE ${PROJECT_SOURCE_DIR}/../proto/Broker.proto ABSOLUTE)
 
-#/home/catalin/.grpc/bin/protoc --proto_path=../proto/ --cpp_out=. --grpc_out=. --plugin=protoc-gen-grpc=/home/catalin/.grpc/bin/grpc_cpp_plugin ../proto/Receiver.proto
+#/home/catalin/.grpc/bin/protoc --proto_path=../proto/ --cpp_out=. --grpc_out=. --plugin=protoc-gen-grpc=/home/catalin/.grpc/bin/grpc_cpp_plugin ../proto/Receiver.proto ../proto/Broker.proto
 
 execute_process(
         COMMAND
         ${PROTO_COMPILER}
-        "--proto_path=${RECEIVER_PROTO_PATH}"
+        "--proto_path=${PROTO_FILES_PATH}"
         "--cpp_out=${PROJECT_SOURCE_DIR}"
         "--grpc_out=${CMAKE_SOURCE_DIR}"
         "--plugin=protoc-gen-grpc=${GRPC_CPP_PLUGIN}"
         ${RECEIVER_PROTO_FILE}
+        ${BROKER_PROTO_FILE}
 )
 
 # generate proto end -----------------------------------------------------------
@@ -157,6 +159,9 @@ set(HEADERS
         RPCReceiver.h
         Receiver.pb.h
         Receiver.grpc.pb.h
+        Broker.pb.h
+        Broker.grpc.pb.h
+        RPCReceiver_Listener.h
         )
 
 set(SOURCES
@@ -168,6 +173,9 @@ set(SOURCES
         RPCReceiver.cpp
         Receiver.pb.cc
         Receiver.grpc.pb.cc
+        Broker.pb.cc
+        Broker.grpc.pb.cc
+        RPCReceiver_Listener.cpp
         )
 
 add_executable(

@@ -55,7 +55,7 @@ bool SocketSender::createTopic(std::string topic)
     std::stringstream jsonMessage;
     jsonMessage << R"({"action": "CREATE_TOPIC", "topic_name": ")"
         << topic
-        << "\"}";
+        << "\"}\r\n\r\n";
 
     if (m_socket.is_open())
         if (sendStr(jsonMessage.str()))
@@ -76,12 +76,16 @@ bool SocketSender::publishMessage(std::string message)
                 << message
                 << R"(", "topic_name": ")"
                 << m_topicName
-                << "\"}";
+                << "\"}\r\n\r\n";
 
     if (m_socket.is_open())
         if (sendStr(jsonMessage.str()))
-            if (!receiveStr().empty())
+        {
+            const std::string ceAmPrimit = receiveStr();
+            std::cout << ceAmPrimit << std::endl;
+            if (!ceAmPrimit.empty())
                 return true;
+        }
 
     return false;
 }

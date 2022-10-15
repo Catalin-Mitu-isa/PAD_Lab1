@@ -60,7 +60,7 @@ bool SocketReceiver::subscribeToTopic(std::string topic)
     std::stringstream jsonMessage;
     jsonMessage << R"({"action": "SUBSCRIBE", "topic_to_subscribe": ")"
         << topic
-        << "\"}";
+        << "\"}\r\n\r\n";
 
     if (m_socket.is_open())
         if (sendStrSync(jsonMessage.str()))
