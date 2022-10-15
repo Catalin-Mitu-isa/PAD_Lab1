@@ -2,6 +2,7 @@ package sender
 
 import (
 	"context"
+	"encoding/json"
 	"google.golang.org/grpc"
 	"mr-l0n3lly/go-broker/internal/db"
 	"mr-l0n3lly/go-broker/internal/models"
@@ -32,6 +33,12 @@ func (s *SenderService) CreateTopic(ctx context.Context, request *CreateTopicReq
 		}, nil
 	}
 
+	response, _ := json.Marshal(CreateTopicResponse{
+		Success: true,
+	})
+
+	logger.Info(string(response))
+
 	return &CreateTopicResponse{
 		Success: true,
 	}, nil
@@ -40,6 +47,7 @@ func (s *SenderService) CreateTopic(ctx context.Context, request *CreateTopicReq
 func (s *SenderService) PublishMessage(ctx context.Context, request *PublishMessageRequest) (*PublishMessageResponse, error) {
 	topicName := request.TopicName
 	subscribers := receiver.GetGRPCSubscribers()
+	logger := logging.GetLogger()
 
 	for _, sub := range subscribers {
 		if sub.TopicName == topicName {
@@ -47,6 +55,7 @@ func (s *SenderService) PublishMessage(ctx context.Context, request *PublishMess
 			if err != nil {
 				continue
 			}
+
 			payload := &broker.SendMessageRequest{
 				Message: request.Message,
 			}
@@ -60,6 +69,11 @@ func (s *SenderService) PublishMessage(ctx context.Context, request *PublishMess
 			}
 		}
 	}
+
+	response, _ := json.Marshal(PublishMessageResponse{
+		Success: true,
+	})
+	logger.Info(string(response))
 
 	return &PublishMessageResponse{
 		Success: true,

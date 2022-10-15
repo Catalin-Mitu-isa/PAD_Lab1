@@ -2,6 +2,7 @@ package receiver
 
 import (
 	"context"
+	"encoding/json"
 	"mr-l0n3lly/go-broker/pkg/logging"
 )
 
@@ -27,6 +28,12 @@ func (r *ReceiverService) Subscribe(ctx context.Context, request *SubscribeReque
 		HostName:  request.HostName,
 		Port:      request.Port,
 	})
+
+	response, _ := json.Marshal(SubscribeResponse{
+		Success: true,
+	})
+
+	logger.Info(string(response))
 
 	return &SubscribeResponse{
 		Success: true,

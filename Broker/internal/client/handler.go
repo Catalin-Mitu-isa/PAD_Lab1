@@ -2,7 +2,6 @@ package client
 
 import (
 	"encoding/json"
-	"fmt"
 	"mr-l0n3lly/go-broker/internal/db"
 	"mr-l0n3lly/go-broker/internal/messages"
 	"mr-l0n3lly/go-broker/internal/models"
@@ -11,7 +10,8 @@ import (
 )
 
 type Handler struct {
-	DB db.Database
+	DB     db.Database
+	Logger *logging.Logger
 }
 
 func (c Handler) createTopicAction(jsonData messages.SenderRequest) (response messages.SenderResponse) {
@@ -41,7 +41,6 @@ func (c Handler) publishMessage(jsonData messages.SenderRequest) (response messa
 	subscribers := models.Subscriber{}.GetTopicSubscribers(jsonData.TopicName)
 	tmp := make([]models.Subscriber, 0)
 
-	fmt.Println(subscribers)
 	for index, sub := range subscribers {
 		logger.Info("sending message", jsonData.Message)
 		_, err := (*sub.Conn).Write([]byte(jsonData.Message))
@@ -51,6 +50,8 @@ func (c Handler) publishMessage(jsonData messages.SenderRequest) (response messa
 			tmp = append(subscribers[:index], subscribers[index+1])
 		}
 	}
+
+	c.Logger.Info("Published to all subscribers")
 
 	subscribers = tmp
 
@@ -73,6 +74,7 @@ func (c Handler) ParseMessage(jsonData messages.SenderRequest, conn *net.Conn) (
 	var responseJson []byte
 	var response messages.SenderResponse
 	var err error
+	c.Logger = logging.GetLogger()
 
 	switch jsonData.Action {
 	case messages.CreateTopicAction:

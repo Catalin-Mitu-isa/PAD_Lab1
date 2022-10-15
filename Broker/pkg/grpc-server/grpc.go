@@ -10,6 +10,7 @@ import (
 
 type Server struct {
 	GRPCServer *grpc.Server
+	Logger     *logging.Logger
 }
 
 var instance *Server
@@ -18,6 +19,7 @@ func GetGrpcServer() *Server {
 	if instance == nil {
 		instance = &Server{
 			GRPCServer: grpc.NewServer(),
+			Logger:     logging.GetLogger(),
 		}
 	}
 
@@ -26,7 +28,6 @@ func GetGrpcServer() *Server {
 
 func (s *Server) Start() {
 	cfg := config.GetConfiguration()
-	logger := logging.GetLogger()
 
 	addr := net.TCPAddr{
 		Port: cfg.GrpcServer.Port,
@@ -34,15 +35,15 @@ func (s *Server) Start() {
 	}
 
 	socket, err := net.ListenTCP("tcp", &addr)
-	logger.Info("started grpc server")
-	logger.Info(cfg.GrpcServer.Host + ":" + strconv.Itoa(cfg.GrpcServer.Port))
+	s.Logger.Info("started grpc server")
+	s.Logger.Info(cfg.GrpcServer.Host + ":" + strconv.Itoa(cfg.GrpcServer.Port))
 	if err != nil {
-		logger.Fatal("grpc listen port failed")
+		s.Logger.Fatal("grpc listen port failed")
 	}
 
 	// s.grpcServer.RegisterService()
 
 	if err = s.GRPCServer.Serve(socket); err != nil {
-		logger.Fatal("failed to serve: %v", err)
+		s.Logger.Fatal("failed to serve: %v", err)
 	}
 }
