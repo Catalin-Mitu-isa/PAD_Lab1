@@ -91,21 +91,101 @@ add_library(sciter INTERFACE)
 # gRPC -------------------------------------------------------------------------
 
 set(ABSL_PROPAGATE_CXX_STD ON)
+set(ABSL_ENABLE_INSTALL ON)
+
+#set(GRPC_TAG "v1.49.1")
+#set(GRPC_SRC "${PROJECT_SOURCE_DIR}/../grpc-${GRPC_TAG}")
+#
+#FetchContent_Declare(gRPC
+#        GIT_REPOSITORY  https://github.com/grpc/grpc.git
+#        GIT_TAG         ${GRPC_TAG}
+#        GIT_SHALLOW     TRUE
+#        SOURCE_DIR      ${GRPC_SRC}
+#        GIT_PROGRESS    TRUE
+#        )
+#
+#FetchContent_MakeAvailable(gRPC)
 
 set(GRPC_TAG "v1.49.1")
 set(GRPC_SRC "${PROJECT_SOURCE_DIR}/../grpc-${GRPC_TAG}")
 
 FetchContent_Declare(gRPC
-        GIT_REPOSITORY  https://github.com/grpc/grpc.git
-        GIT_TAG         ${GRPC_TAG}
-        GIT_SHALLOW     TRUE
-        SOURCE_DIR      ${GRPC_SRC}
-        GIT_PROGRESS    TRUE
-        )
+       GIT_REPOSITORY  https://github.com/grpc/grpc.git
+       GIT_TAG         ${GRPC_TAG}
+       GIT_SHALLOW     TRUE
+       SOURCE_DIR      ${GRPC_SRC}
+       GIT_PROGRESS    TRUE
+       )
 
-FetchContent_MakeAvailable(gRPC)
+FetchContent_GetProperties(gRPC)
+
+if(NOT grpc_POPULATED)
+   message(STATUS "Fetching grpc ${GRPC_TAG}")
+
+   if(EXISTS "${GRPC_SRC}")
+       set(FETCHCONTENT_SOURCE_DIR_GRPC ${GRPC_SRC})
+       message(STATUS "grpc ${GRPC_TAG} found; skip fetching.")
+   endif()
+
+   FetchContent_Populate(gRPC)
+   message(STATUS "Populating grpc ${GRPC_TAG} done; src at ${grpc_SOURCE_DIR}")
+endif()
+
+add_library(gRPC INTERFACE)
+
+target_include_directories(gRPC
+       INTERFACE ${grpc_SOURCE_DIR}/include
+       )
+
+target_compile_definitions(gRPC
+       INTERFACE
+#        ASIO_STANDALONE
+#        ASIO_NO_DEPRECATED
+       )
+
+#target_link_libraries(gRPC
+#        INTERFACE pthread
+#        )
+
 
 # gRPC end ---------------------------------------------------------------------
+
+# protobuf ---------------------------------------------------------------------
+
+set(PROTOBUF_TAG "v3.19.3")
+set(PROTOBUF_SRC "${PROJECT_SOURCE_DIR}/../protobuf-${PROTOBUF_TAG}")
+
+FetchContent_Declare(
+       protobuf
+       GIT_REPOSITORY https://github.com/google/protobuf.git
+       GIT_TAG        ${PROTOBUF_TAG}
+       GIT_SHALLOW    TRUE
+       SOURCE_DIR     ${PROTOBUF_SRC}
+       GIT_PROGRESS   TRUE
+)
+#set(protobuf_BUILD_TESTS OFF)
+#set(protobuf_BUILD_CONFORMANCE OFF)
+#set(protobuf_BUILD_EXAMPLES OFF)
+set(protobuf_BUILD_PROTOC_BINARIES ON)
+#set(protobuf_DISABLE_RTTI ON)
+#set(protobuf_MSVC_STATIC_RUNTIME ON)
+#set(protobuf_WITH_ZLIB ON CACHE BOOL "" FORCE)
+
+FetchContent_GetProperties(protobuf)
+if(NOT protobuf_POPULATED)
+   message(STATUS "Fetching protobuf ${PROTOBUF_TAG}")
+
+   if(EXISTS ${PROTOBUF_SRC})
+       set(FETCHCONTENT_SOURCE_DIR_PROTOBUF ${PROTOBUF_SRC})
+       message(STATUS "protobuf ${PROTOBUF_TAG} already found")
+   endif()
+
+   FetchContent_Populate(protobuf)
+
+   set(PROTOBUF_ROOT_DIR "${protobuf_SOURCE_DIR}")
+endif()
+
+# protobuf end -----------------------------------------------------------------
 
 # generate proto ---------------------------------------------------------------
 
