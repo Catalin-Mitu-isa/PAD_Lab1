@@ -90,13 +90,13 @@ add_library(sciter INTERFACE)
 set(ABSL_PROPAGATE_CXX_STD ON)
 
 set(GRPC_TAG "v1.49.1")
-set(GRPC_SRC "${PROJECT_SOURCE_DIR}/grpc-${GRPC_TAG}")
+#set(GRPC_SRC "${PROJECT_SOURCE_DIR}/grpc-${GRPC_TAG}")
 
 FetchContent_Declare(gRPC
         GIT_REPOSITORY  https://github.com/grpc/grpc.git
         GIT_TAG         ${GRPC_TAG}
         GIT_SHALLOW     TRUE
-        SOURCE_DIR      ${GRPC_SRC}
+#        SOURCE_DIR      ${GRPC_SRC}
         GIT_PROGRESS    TRUE
         )
 
