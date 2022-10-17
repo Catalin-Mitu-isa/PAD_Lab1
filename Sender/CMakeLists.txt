@@ -109,12 +109,8 @@ FetchContent_MakeAvailable(gRPC)
 
 # generate proto ---------------------------------------------------------------
 
-#find_program(GRPC_CPP_PLUGIN grpc_cpp_plugin)
-#find_program(PROTO_COMPILER protoc)
-set(GRPC_CPP_PLUGIN "/home/catalin/.grpc/bin/grpc_cpp_plugin")
-set(PROTO_COMPILER "/home/catalin/.grpc/bin/protoc")
-message("GRPC_CPP_PLUGIN: ${GRPC_CPP_PLUGIN}")
-message("PROTO_COMPILER: ${PROTO_COMPILER}")
+set(GRPC_CPP_PLUGIN $<TARGET_FILE:grpc_cpp_plugin>)
+set(PROTO_COMPILER $<TARGET_FILE:protoc>)
 
 get_filename_component(SENDER_PROTO_FILE ${PROJECT_SOURCE_DIR}/../proto/Sender.proto ABSOLUTE)
 get_filename_component(SENDER_PROTO_PATH ${SENDER_PROTO_FILE} PATH)
