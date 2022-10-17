@@ -10,13 +10,13 @@
 #include <sstream>
 #include <memory>
 #include <thread>
+#include <cstdlib>
 #include <grpcpp/create_channel.h>
 #include <grpcpp/server_builder.h>
 
 #define BROKER_GRPC_PORT 43201
 #define BROKER_NAME "broker.pad.utm.md"
 
-#define RECEIVER_GRPC_PORT 8081
 #define RECEIVER_HOSTNAME "UFO-L"
 
 class RPCReceiver : public IReceiver

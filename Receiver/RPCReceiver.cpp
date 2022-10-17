@@ -27,7 +27,8 @@ void RPCReceiver::createListenerServer()
     grpc::ServerBuilder serverBuilder;
     {
         std::stringstream ss;
-        ss << RECEIVER_HOSTNAME << ':' << RECEIVER_GRPC_PORT;
+        const int randomPort = rand() % 30000 + 10000 // interval 10000; 40000
+        ss << RECEIVER_HOSTNAME << ':' << randomPort;
         serverBuilder.AddListeningPort(ss.str(), grpc::InsecureServerCredentials());
     }
     serverBuilder.RegisterService(&m_listenerService);
