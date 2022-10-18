@@ -49,5 +49,6 @@ bool RPCReceiver::subscribeToTopic(std::string topic)
 
 void RPCReceiver::listenForMessages(std::function<void(const std::string &)> handler)
 {
+    std::cout << "listen for messages" << std::endl;
     m_listenerService.setMsgHandler(handler);
 }

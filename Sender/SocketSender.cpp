@@ -22,15 +22,25 @@ void SocketSender::connectToBroker()
 std::size_t SocketSender::sendStr(const std::string & str)
 {
     if (m_socket.is_open())
+    {
+        std::cout << __FUNCTION__ << ": socket is open. Send: " << str << std::endl;
         return m_socket.write_some(asio::buffer(str.data(), str.size()));
+    }
     else
+    {
+        std::cout << __FUNCTION__
+            << ": socket is closed. attempted to send: " << str << std::endl;
         return 0;
+    }
 }
 
 std::string SocketSender::receiveStr()
 {
     if (!m_socket.is_open())
+    {
+        std::cout << __FUNCTION__ << ": socket closed" << std::endl;
         return {};
+    }
 
     std::stringstream stringStream;
     m_socket.wait(m_socket.wait_read);
@@ -47,6 +57,8 @@ std::string SocketSender::receiveStr()
         stringStream.write(buffer.data(), bytesRead);
     }
 
+    std::cout << __FUNCTION__ << ": received string: " << stringStream.str() << std::endl;
+
     return stringStream.str();
 }
 
@@ -59,18 +71,22 @@ bool SocketSender::createTopic(std::string topic)
 
     if (m_socket.is_open())
         if (sendStr(jsonMessage.str()))
-            if (!receiveStr().empty())
+        {
+            const std::string receivedStr = receiveStr();
+            if (!receivedStr.empty())
             {
                 if (m_topicName.empty())
                     m_topicName = topic;
                 return true;
             }
+        }
 
     return false;
 }
 
 bool SocketSender::publishMessage(std::string message)
 {
+    std::cout << __FUNCTION__ << std::endl;
     std::stringstream jsonMessage;
     jsonMessage << R"({"action": "PUBLISH_MESSAGE", "message": ")"
                 << message
@@ -82,7 +98,7 @@ bool SocketSender::publishMessage(std::string message)
         if (sendStr(jsonMessage.str()))
         {
             const std::string ceAmPrimit = receiveStr();
-            std::cout << ceAmPrimit << std::endl;
+            std::cout << __FUNCTION__ << ". ce am primit: " << ceAmPrimit << std::endl;
             if (!ceAmPrimit.empty())
                 return true;
         }

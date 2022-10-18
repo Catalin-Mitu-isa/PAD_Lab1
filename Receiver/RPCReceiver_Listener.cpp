@@ -13,5 +13,6 @@ grpc::Status RPCReceiver_Listener::SendMessage(
 void RPCReceiver_Listener::setMsgHandler(
         const std::function<void(const std::string &)> & handler)
 {
+    std::cout << "setMsgHandler" << std::endl;
     m_msgHandler = handler;
 }

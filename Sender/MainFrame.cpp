@@ -22,6 +22,7 @@ bool MainFrame::createTopic(sciter::value s_value)
 
 bool MainFrame::publishMessage(sciter::value s_value)
 {
+    std::cout << __FUNCTION__ << std::endl;
     std::string message = s_value.get<sciter::astring>();
     if (message.empty())
         return false;
