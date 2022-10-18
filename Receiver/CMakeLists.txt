@@ -100,6 +100,17 @@ FetchContent_Declare(gRPC
         GIT_PROGRESS    TRUE
         )
 
+set(gRPC_BUILD_TESTS OFF)
+set(gRPC_BUILD_CODEGEN ON) # for grpc_cpp_plugin
+set(gRPC_BUILD_GRPC_CPP_PLUGIN ON) # we want to use only C++ plugin
+set(gRPC_BUILD_CSHARP_EXT OFF)
+set(gRPC_BUILD_GRPC_CSHARP_PLUGIN OFF)
+set(gRPC_BUILD_GRPC_NODE_PLUGIN OFF)
+set(gRPC_BUILD_GRPC_OBJECTIVE_C_PLUGIN OFF)
+set(gRPC_BUILD_GRPC_PHP_PLUGIN OFF)
+set(gRPC_BUILD_GRPC_PYTHON_PLUGIN OFF)
+set(gRPC_BUILD_GRPC_RUBY_PLUGIN OFF)
+
 message(STATUS "Fetching grpc")
 FetchContent_MakeAvailable(gRPC)
 message(STATUS "grpc fetch done")
