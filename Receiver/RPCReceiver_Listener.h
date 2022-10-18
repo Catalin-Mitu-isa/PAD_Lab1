@@ -1,8 +1,8 @@
 #ifndef RECEIVER_RPCRECEIVER_LISTENER_H
 #define RECEIVER_RPCRECEIVER_LISTENER_H
 
-#include "Broker.pb.h"
-#include "Broker.grpc.pb.h"
+#include <Broker.pb.h>
+#include <Broker.grpc.pb.h>
 #include <functional>
 
 class RPCReceiver_Listener : public broker::BrokerService::Service

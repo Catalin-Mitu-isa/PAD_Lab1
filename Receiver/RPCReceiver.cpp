@@ -5,6 +5,7 @@ RPCReceiver::RPCReceiver()
 {
     createStub();
     createListenerServer();
+    m_listenerPort = rand() % 30000 + 10000; // interval 10000; 40000
 }
 
 RPCReceiver::~RPCReceiver()
@@ -27,8 +28,7 @@ void RPCReceiver::createListenerServer()
     grpc::ServerBuilder serverBuilder;
     {
         std::stringstream ss;
-        const int randomPort = rand() % 30000 + 10000 // interval 10000; 40000
-        ss << RECEIVER_HOSTNAME << ':' << randomPort;
+        ss << RECEIVER_HOSTNAME << ':' << m_listenerPort;
         serverBuilder.AddListeningPort(ss.str(), grpc::InsecureServerCredentials());
     }
     serverBuilder.RegisterService(&m_listenerService);
@@ -42,7 +42,7 @@ bool RPCReceiver::subscribeToTopic(std::string topic)
     receiver::SubscribeResponse response;
     request.set_topicname(topic);
     request.set_hostname(RECEIVER_HOSTNAME);
-    request.set_port(RECEIVER_GRPC_PORT);
+    request.set_port(m_listenerPort);
     m_stub->Subscribe(&ctx, request, &response);
     return response.success();
 }

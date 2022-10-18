@@ -117,16 +117,71 @@ get_filename_component(BROKER_PROTO_FILE ${PROJECT_SOURCE_DIR}/../proto/Broker.p
 
 #/home/catalin/.grpc/bin/protoc --proto_path=../proto/ --cpp_out=. --grpc_out=. --plugin=protoc-gen-grpc=/home/catalin/.grpc/bin/grpc_cpp_plugin ../proto/Receiver.proto ../proto/Broker.proto
 
-execute_process(
-        COMMAND
-        ${PROTO_COMPILER}
-        "--proto_path=${PROTO_FILES_PATH}"
-        "--cpp_out=${PROJECT_SOURCE_DIR}"
-        "--grpc_out=${CMAKE_SOURCE_DIR}"
-        "--plugin=protoc-gen-grpc=${GRPC_CPP_PLUGIN}"
-        ${RECEIVER_PROTO_FILE}
-        ${BROKER_PROTO_FILE}
-)
+set(_gRPC_PROTOBUF_PROTOC_EXECUTABLE $<TARGET_FILE:protoc>)
+set(_gRPC_PROTO_GENS_DIR ${CMAKE_BINARY_DIR}/proto)
+file(MAKE_DIRECTORY ${_gRPC_PROTO_GENS_DIR})
+set(_gRPC_PROTOBUF_WELLKNOWN_INCLUDE_DIR ${PROTO_FILES_PATH})
+
+function(target_add_protobuf target)
+    if(NOT TARGET ${target})
+        message(FATAL_ERROR "Target ${target} doesn't exist")
+    endif()
+    if(NOT ARGN)
+        message(SEND_ERROR "Error: PROTOBUF_GENERATE_GRPC_CPP() called without any proto files")
+        return()
+    endif()
+
+    foreach(FIL ${ARGN})
+        get_filename_component(ABS_FIL ${FIL} ABSOLUTE)
+        get_filename_component(FIL_PATH ${ABS_FIL} PATH)
+        get_filename_component(FIL_WE ${FIL} NAME_WE)
+        file(RELATIVE_PATH REL_FIL ${CMAKE_CURRENT_SOURCE_DIR} ${ABS_FIL})
+        get_filename_component(REL_DIR ${REL_FIL} DIRECTORY)
+        if(NOT REL_DIR)
+            set(RELFIL_WE "${FIL_WE}")
+        else()
+            set(RELFIL_WE "${REL_DIR}/${FIL_WE}")
+        endif()
+        message("REL_FIL = ${REL_FIL}")
+        message("ABS_FIL = ${ABS_FIL}")
+        message("FIL_PATH = ${FIL_PATH}")
+
+        if(NOT TARGET grpc_cpp_plugin)
+            message(FATAL_ERROR "Can not find target grpc_cpp_plugin")
+        endif()
+        set(_gRPC_CPP_PLUGIN $<TARGET_FILE:grpc_cpp_plugin>)
+
+        add_custom_command(
+                OUTPUT  "${_gRPC_PROTO_GENS_DIR}/${RELFIL_WE}.grpc.pb.cc"
+                "${_gRPC_PROTO_GENS_DIR}/${RELFIL_WE}.grpc.pb.h"
+                "${_gRPC_PROTO_GENS_DIR}/${RELFIL_WE}_mock.grpc.pb.h"
+                "${_gRPC_PROTO_GENS_DIR}/${RELFIL_WE}.pb.cc"
+                "${_gRPC_PROTO_GENS_DIR}/${RELFIL_WE}.pb.h"
+                COMMAND ${_gRPC_PROTOBUF_PROTOC_EXECUTABLE}
+                ARGS --grpc_out=${_gRPC_PROTO_GENS_DIR}
+                --cpp_out=${_gRPC_PROTO_GENS_DIR}
+                --plugin=protoc-gen-grpc=${_gRPC_CPP_PLUGIN}
+                --proto_path=/home/catalin/UTM/Sem7/PAD/PAD_Lab1/Project/proto/
+                ${ABS_FIL}
+                DEPENDS ${ABS_FIL} ${_gRPC_PROTOBUF_PROTOC} ${_gRPC_CPP_PLUGIN}
+                WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
+                COMMENT "Running gRPC C++ protocol buffer compiler on ${FIL}"
+                VERBATIM)
+
+        target_sources(${target} PRIVATE
+                "${_gRPC_PROTO_GENS_DIR}/${RELFIL_WE}.grpc.pb.cc"
+                "${_gRPC_PROTO_GENS_DIR}/${RELFIL_WE}.grpc.pb.h"
+                "${_gRPC_PROTO_GENS_DIR}/${RELFIL_WE}.pb.cc"
+                "${_gRPC_PROTO_GENS_DIR}/${RELFIL_WE}.pb.h"
+                )
+        target_include_directories(${target} PRIVATE
+                $<BUILD_INTERFACE:${_gRPC_PROTO_GENS_DIR}>
+                $<BUILD_INTERFACE:${_gRPC_PROTOBUF_WELLKNOWN_INCLUDE_DIR}>
+                $<BUILD_INTERFACE:${grpc_SOURCE_DIR}/include>
+                $<BUILD_INTERFACE:${grpc_SOURCE_DIR}/third_party/abseil-cpp>
+                )
+    endforeach()
+endfunction()
 
 # generate proto end -----------------------------------------------------------
 
@@ -155,10 +210,6 @@ set(HEADERS
         IReceiver.h
         SocketReceiver.h
         RPCReceiver.h
-        Receiver.pb.h
-        Receiver.grpc.pb.h
-        Broker.pb.h
-        Broker.grpc.pb.h
         RPCReceiver_Listener.h
         )
 
@@ -169,10 +220,6 @@ set(SOURCES
         MainFrame.cpp
         SocketReceiver.cpp
         RPCReceiver.cpp
-        Receiver.pb.cc
-        Receiver.grpc.pb.cc
-        Broker.pb.cc
-        Broker.grpc.pb.cc
         RPCReceiver_Listener.cpp
         )
 
@@ -183,6 +230,9 @@ add_executable(
         ${LIBRARY}
         ${GENERATED_RESOURCES_FILE}
         )
+
+target_add_protobuf(${PROJECT_NAME} "../proto/Receiver.proto")
+target_add_protobuf(${PROJECT_NAME} "../proto/Broker.proto")
 
 # Link the target to the GTK+ libraries
 target_link_libraries(${PROJECT_NAME} ${GTK3_LIBRARIES} "${SCITER_SDK}/bin/linux/x64/libsciter.so")
