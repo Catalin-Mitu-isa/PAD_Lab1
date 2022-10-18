@@ -175,7 +175,7 @@ function(target_add_protobuf target)
                 ARGS --grpc_out=${_gRPC_PROTO_GENS_DIR}
                 --cpp_out=${_gRPC_PROTO_GENS_DIR}
                 --plugin=protoc-gen-grpc=${_gRPC_CPP_PLUGIN}
-                --proto_path=/home/catalin/UTM/Sem7/PAD/PAD_Lab1/Project/proto/
+                --proto_path=${FIL_PATH}
                 ${ABS_FIL}
                 DEPENDS ${ABS_FIL} ${_gRPC_PROTOBUF_PROTOC} ${_gRPC_CPP_PLUGIN}
                 WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
