@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.22)
+cmake_minimum_required(VERSION 3.18)
 project(Sender)
 
 set(CMAKE_CXX_STANDARD 20)
@@ -103,7 +103,9 @@ FetchContent_Declare(gRPC
         GIT_PROGRESS    TRUE
         )
 
+message(STATUS "Fetching grpc")
 FetchContent_MakeAvailable(gRPC)
+message(STATUS "grpc fetch done")
 
 # gRPC end ---------------------------------------------------------------------
 
