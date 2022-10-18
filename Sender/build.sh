@@ -5,13 +5,13 @@ sudo apt install \
 	cmake \
 	make \
 	g++ \
-	libgtk-3-dev
+	libgtk-3-dev \
 	build-essential \
 	pkg-config \
-
-	autoconf \
-	libtool \
 	-y
+
+	# autoconf \
+	# libtool \
 
 mkdir -p ./cmake-build
 
