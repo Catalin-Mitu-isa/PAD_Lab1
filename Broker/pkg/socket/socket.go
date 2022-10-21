@@ -70,15 +70,19 @@ CONNLOOP:
 		switch err {
 		case io.EOF:
 			logger.Error("%v", err)
+			defer conn.Close()
 			break CONNLOOP
 		case nil:
 			logger.Info("received: ", string(data))
 			if isTransportOver(string(data)) {
+				message, leftOver, _ := strings.Cut(string(data), "\r\n\r\n")
 				jsonData := messages.SenderRequest{}
-				err = json.Unmarshal(data[1:], &jsonData)
+				err = json.Unmarshal([]byte(message)[1:], &jsonData)
+				data = []byte(leftOver)
 
 				if err != nil {
 					logger.Error("%v", err)
+					defer conn.Close()
 					break CONNLOOP
 				}
 
@@ -104,7 +108,7 @@ CONNLOOP:
 				//	defer conn.Close()
 				//}
 
-				break CONNLOOP
+				// break CONNLOOP
 			}
 		default:
 			logger.Fatal("receive data failed: ", err.Error())
