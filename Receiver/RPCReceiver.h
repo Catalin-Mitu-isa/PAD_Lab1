@@ -2,21 +2,19 @@
 #define SENDER_GRPCSENDER_H
 
 #include "IReceiver.h"
-#include "Receiver.pb.h"
-#include "Receiver.grpc.pb.h"
-#include "Broker.pb.h"
-#include "Broker.grpc.pb.h"
+#include <Receiver.pb.h>
+#include <Receiver.grpc.pb.h>
 #include "RPCReceiver_Listener.h"
 #include <sstream>
 #include <memory>
 #include <thread>
+#include <cstdlib>
 #include <grpcpp/create_channel.h>
 #include <grpcpp/server_builder.h>
 
 #define BROKER_GRPC_PORT 43201
 #define BROKER_NAME "broker.pad.utm.md"
 
-#define RECEIVER_GRPC_PORT 8081
 #define RECEIVER_HOSTNAME "UFO-L"
 
 class RPCReceiver : public IReceiver
@@ -36,6 +34,7 @@ private:
     RPCReceiver_Listener m_listenerService;
     std::thread m_listenerThread;
     bool m_listeningForMessages;
+    uint16_t m_listenerPort;
 };
 
 #endif //SENDER_GRPCSENDER_H

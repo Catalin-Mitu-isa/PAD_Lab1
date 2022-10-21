@@ -11,6 +11,7 @@ document.on("click", "button#btn_create_topic", function() {
     {
         $("#create_topic_section").style.display = "none";
         $("#message_input_section").style.display = "block";
+        $("#connection_section").style.display = "none";
     }
     topic_input_field.value = "";
 });

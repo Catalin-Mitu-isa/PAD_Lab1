@@ -12,4 +12,7 @@ Receiver
 Request:  {"action": "SUBSCRIBE", "topic_name": "<value>"}
 Response: {"action": "SUBSCRIBE", "success": "<bool_value", "error": "<error>"}
 
+Broker -> Receiver
 
+Request:  <the message without json parsing>
+Response: no response

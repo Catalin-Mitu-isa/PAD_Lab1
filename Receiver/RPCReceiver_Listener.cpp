@@ -6,11 +6,13 @@ grpc::Status RPCReceiver_Listener::SendMessage(
         , broker::SendMessageResponse * response)
 {
     m_msgHandler(request->message());
+    response->set_success(true);
     return grpc::Status::OK;
 }
 
 void RPCReceiver_Listener::setMsgHandler(
         const std::function<void(const std::string &)> & handler)
 {
+    std::cout << "setMsgHandler" << std::endl;
     m_msgHandler = handler;
 }

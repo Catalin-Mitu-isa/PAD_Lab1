@@ -4,15 +4,16 @@ sudo apt update
 sudo apt install \
 	cmake \
 	make \
-	protobuf-compiler \
-	protobuf-compiler-grpc \
+	g++ \
+	libgtk-3-dev \
 	build-essential \
-	autoconf \
-	libtool \
 	pkg-config \
 	-y
 
-mkdir -p ../../cmake/Sender/
+	# autoconf \
+	# libtool \
 
-cmake -S . -B ../../cmake/Sender
-make ../../cmake/Sender
+mkdir -p ./cmake-build
+
+cmake -S . -B ./cmake-build
+make ./cmake-build

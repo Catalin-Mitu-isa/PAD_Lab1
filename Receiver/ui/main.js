@@ -11,6 +11,7 @@ document.on("click", "button#btn_subscribe_to_topic", function() {
     {
         $("#subscribe_to_topic_section").style.display = "none";
         $("#messages_section").style.display = "block";
+        $("#connection_section").style.display = "none";
     }
     topic_input_field.value = "";
 });

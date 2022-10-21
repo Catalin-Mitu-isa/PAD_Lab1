@@ -17,7 +17,10 @@ bool RPCSender::createTopic(const std::string topic)
     m_stub->CreateTopic(&ctx, request, &response);
     const bool createSuccessful = response.success();
     if (createSuccessful)
+    {
+        std::cout << "Topic prin rpc creat" << std::endl;
         m_topicName = topic;
+    }
     return createSuccessful;
 }
 
