@@ -51,7 +51,7 @@ func (s *SenderService) PublishMessage(ctx context.Context, request *PublishMess
 
 	for _, sub := range subscribers {
 		if sub.TopicName == topicName {
-			conn, err := grpc.Dial(sub.HostName + ":" + strconv.Itoa(int(sub.Port)))
+			conn, err := grpc.Dial(sub.HostName+":"+strconv.Itoa(int(sub.Port)), grpc.WithInsecure())
 			if err != nil {
 				continue
 			}
