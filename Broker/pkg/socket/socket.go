@@ -77,7 +77,13 @@ CONNLOOP:
 			if isTransportOver(string(data)) {
 				message, leftOver, _ := strings.Cut(string(data), "\r\n\r\n")
 				jsonData := messages.SenderRequest{}
-				err = json.Unmarshal([]byte(message)[1:], &jsonData)
+
+				if message[0] == 0 {
+					err = json.Unmarshal([]byte(message)[1:], &jsonData)
+				} else {
+					err = json.Unmarshal([]byte(message)[0:], &jsonData)
+				}
+
 				data = []byte(leftOver)
 
 				if err != nil {
