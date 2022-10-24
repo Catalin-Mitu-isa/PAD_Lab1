@@ -3,9 +3,9 @@
 RPCReceiver::RPCReceiver()
     : m_listeningForMessages(false)
 {
+    generateListenerPort();
     createStub();
     createListenerServer();
-    m_listenerPort = rand() % 30000 + 10000; // interval 10000; 40000
 }
 
 RPCReceiver::~RPCReceiver()
@@ -13,6 +13,13 @@ RPCReceiver::~RPCReceiver()
     m_listeningForMessages = false;
     m_server->Shutdown();
     m_server->Wait();
+}
+
+void RPCReceiver::generateListenerPort()
+{
+    srand(time(NULL));
+    m_listenerPort = rand() % 30000 + 10000; // interval 10000; 40000
+    std::cout << "gRPC listening port generated: " << m_listenerPort << std::endl;
 }
 
 void RPCReceiver::createStub()

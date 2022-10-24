@@ -26,6 +26,7 @@ public:
     void listenForMessages(std::function<void(const std::string &)> handler) override;
 
 private:
+    void generateListenerPort();
     void createStub();
     void createListenerServer();
 
