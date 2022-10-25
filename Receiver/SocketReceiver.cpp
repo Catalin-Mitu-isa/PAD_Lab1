@@ -58,7 +58,7 @@ std::string SocketReceiver::receiveStrSync()
 bool SocketReceiver::subscribeToTopic(std::string topic)
 {
     std::stringstream jsonMessage;
-    jsonMessage << R"({"action": "SUBSCRIBE", "topic_to_subscribe": ")"
+    jsonMessage << R"({"action": "SUBSCRIBE", "topic_name": ")"
         << topic
         << "\"}\r\n\r\n";
 
